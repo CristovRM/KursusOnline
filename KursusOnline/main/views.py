@@ -16,3 +16,9 @@ def about(request):
 def contact(request):
     context={}
     return render(request, "main/contact.html", context)
+def mycourse(request):
+    context={}
+    return render(request, "main/student/mycourse.html", context)
+def mycourse1(request):
+    context={}
+    return render(request, "main/student/mycourse1.html", context)
