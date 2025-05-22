@@ -1,21 +1,20 @@
 from django.db import models
 
-from django.db import models
-
 class Member(models.Model):
+    ROLE_CHOICES = [
+        ('peserta', 'Peserta'),
+        ('pengajar', 'Pengajar'),
+        ('admin', 'Admin'),
+    ]
+
     nama = models.CharField(max_length=255, default='Anonim')
     email = models.EmailField(unique=True)
     pekerjaan = models.CharField(max_length=255, default='Mahasiswa')
     password = models.CharField(max_length=255)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='peserta')
 
     def __str__(self):
-        return self.nama
-
-class Pengajar(models.Model):
-    user = models.ForeignKey(Member, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Pengajar: {self.user.nama}"
+        return f"{self.nama} ({self.role})"
 
 class Kategori(models.Model):
     nama = models.CharField(max_length=255)
@@ -28,7 +27,7 @@ class Kursus(models.Model):
     deskripsi = models.TextField()
     foto = models.CharField(max_length=255)
     kategori = models.ForeignKey(Kategori, on_delete=models.CASCADE)
-    pengajar = models.ForeignKey(Pengajar, on_delete=models.CASCADE)
+    pengajar = models.ForeignKey(Member, on_delete=models.CASCADE, limit_choices_to={'role': 'pengajar'})
 
     def __str__(self):
         return self.nama
@@ -70,13 +69,13 @@ class Rating(models.Model):
         return f"{self.kursus.nama} - {self.user.nama} ({self.rating})"
 
 class PendapatanPengajar(models.Model):
-    pengajar = models.ForeignKey(Pengajar, on_delete=models.CASCADE)
+    pengajar = models.ForeignKey(Member, on_delete=models.CASCADE, limit_choices_to={'role': 'pengajar'})
     transaksi = models.ForeignKey(Transaksi, on_delete=models.CASCADE)
     jumlah = models.DecimalField(max_digits=10, decimal_places=2)
     tanggal = models.DateField()
 
     def __str__(self):
-        return f"{self.pengajar.user.nama} - Rp{self.jumlah}"
+        return f"{self.pengajar.nama} - Rp{self.jumlah}"
 
 class PendapatanAdmin(models.Model):
     transaksi = models.ForeignKey(Transaksi, on_delete=models.CASCADE)
