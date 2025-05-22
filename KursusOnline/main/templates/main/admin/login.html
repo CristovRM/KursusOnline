@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white rounded-xl shadow-xl p-8 w-full max-w-md space-y-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800">Admin Login</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="text-red-500 text-sm">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <p class="text-red-500 text-sm">{{ form.password.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
+                Masuk
+            </button>
+        </form>
+
+    </div>
+
+</body>
+</html>

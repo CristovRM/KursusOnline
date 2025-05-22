@@ -9,4 +9,5 @@ urlpatterns = [
     path("contact", views.contact, name="contact"),
     path("my-courses", views.mycourse, name="mycourse"),
     path("my-courses1", views.mycourse1, name="mycourse1"),
+    path('login-admin', views.login_admin, name='admin_login'),
 ]
