@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import AdminLoginForm
-from .models import Member
+from .models import Member, Kursus, Transaksi, PendapatanAdmin
+from django.db.models import Sum
+
 
 # Create your views here.
 def home(request):
@@ -44,3 +46,25 @@ def login_admin(request):
         form = AdminLoginForm()
 
     return render(request, 'main/admin/login.html', {'form': form})
+
+def admin_dashboard(request):
+    if 'admin_id' not in request.session:
+        return redirect('admin_login')
+
+    total_users = Member.objects.count()
+    total_kursus = Kursus.objects.count()
+    total_pendapatan_admin = PendapatanAdmin.objects.aggregate(Sum('jumlah'))['jumlah__sum'] or 0
+    transaksi_terbaru = Transaksi.objects.select_related('user', 'kursus').order_by('-id')[:5]
+
+    context = {
+        'total_users': total_users,
+        'total_kursus': total_kursus,
+        'total_pendapatan_admin': total_pendapatan_admin,
+        'transaksi_terbaru': transaksi_terbaru,
+        'admin_nama': request.session.get('admin_nama'),
+    }
+    return render(request, 'main/admin/dashboard.html', context)
+
+def logout_admin(request):
+    request.session.flush()
+    return redirect('admin_login')

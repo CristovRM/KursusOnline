@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Admin - ZapCourse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/flowbite@1.6.5/dist/flowbite.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+
+<!-- Toggle Button -->
+<button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar"
+        type="button"
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200">
+  <span class="sr-only">Open sidebar</span>
+  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm.75 4.5a.75.75 0 000 1.5h7.5a.75.75 0 000-1.5H2.75z"></path>
+  </svg>
+</button>
+
+<!-- Sidebar -->
+<aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white" aria-label="Sidebar">
+  <div class="h-full px-3 py-4 overflow-y-auto">
+    <h1 class="text-xl font-bold text-white px-2 mb-4">ZapCourse Admin</h1>
+    <p class="text-sm text-indigo-200 px-2 mb-4">Halo, {{ admin_nama }}</p>
+    <ul class="space-y-2 font-medium">
+      <li>
+        <a href="#" class="flex items-center p-2 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white">
+          <i class="fas fa-chart-line w-5"></i>
+          <span class="ml-3">Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Kelola Kursus Collapse Menu -->
+      <li>
+        <button type="button" class="flex items-center w-full p-2 rounded-lg hover:bg-indigo-700 text-white"
+                data-collapse-toggle="kursus-menu" aria-controls="kursus-menu" aria-expanded="false">
+          <i class="fas fa-book w-5"></i>
+          <span class="ml-3 flex-1 text-left whitespace-nowrap">Kelola Kursus</span>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <ul id="kursus-menu" class="hidden pl-10 mt-1 space-y-1 text-sm">
+          <li><a href="#" class="hover:underline">Daftar Kursus</a></li>
+          <li><a href="#" class="hover:underline">Kelola Kategori</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+          <i class="fas fa-users w-5"></i>
+          <span class="ml-3">Kelola Pengguna</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+          <i class="fas fa-money-check-alt w-5"></i>
+          <span class="ml-3">Transaksi</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+          <i class="fas fa-star w-5"></i>
+          <span class="ml-3">Feedback Kursus</span>
+        </a>
+      </li>
+
+      <!-- Laporan Pendapatan Collapse Menu -->
+      <li>
+        <button type="button" class="flex items-center w-full p-2 rounded-lg hover:bg-indigo-700 text-white"
+                data-collapse-toggle="pendapatan-menu" aria-controls="pendapatan-menu" aria-expanded="false">
+          <i class="fas fa-chart-pie w-5"></i>
+          <span class="ml-3 flex-1 text-left whitespace-nowrap">Laporan Pendapatan</span>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <ul id="pendapatan-menu" class="hidden pl-10 mt-1 space-y-1 text-sm">
+          <li><a href="#" class="hover:underline">Pendapatan Admin</a></li>
+          <li><a href="#" class="hover:underline">Pendapatan Pengajar</a></li>
+        </ul>
+      </li>
+
+      <li class="mt-6">
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-red-600 text-red-200 hover:text-white">
+          <i class="fas fa-sign-out-alt w-5"></i>
+          <span class="ml-3">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="p-4 sm:ml-64">
+  <div class="p-4 mt-4">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Total Pengguna -->
+      <div class="bg-white shadow rounded-lg p-6 border-l-4 border-blue-500">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
+            <i class="fas fa-users text-xl"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Pengguna</p>
+            <h3 class="text-2xl font-bold text-gray-800">{{ total_users }}</h3>
+          </div>
+        </div>
+      </div>
+      <!-- Total Kursus -->
+      <div class="bg-white shadow rounded-lg p-6 border-l-4 border-emerald-500">
+        <div class="flex items-center gap-4">
+          <div class="bg-emerald-100 text-emerald-600 p-3 rounded-full">
+            <i class="fas fa-chalkboard-teacher text-xl"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Kursus</p>
+            <h3 class="text-2xl font-bold text-gray-800">{{ total_kursus }}</h3>
+          </div>
+        </div>
+      </div>
+      <!-- Pendapatan -->
+      <div class="bg-white shadow rounded-lg p-6 border-l-4 border-purple-500">
+        <div class="flex items-center gap-4">
+          <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
+            <i class="fas fa-coins text-xl"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Pendapatan</p>
+            <h3 class="text-2xl font-bold text-gray-800">Rp {{ total_pendapatan_admin|floatformat:0 }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white shadow rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Transaksi Terbaru</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+          <tr>
+            <th scope="col" class="px-6 py-3">#</th>
+            <th scope="col" class="px-6 py-3">Nama Pengguna</th>
+            <th scope="col" class="px-6 py-3">Kursus</th>
+            <th scope="col" class="px-6 py-3">Total</th>
+            <th scope="col" class="px-6 py-3">Status</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for t in transaksi_terbaru %}
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="px-6 py-4">{{ t.id }}</td>
+              <td class="px-6 py-4">{{ t.user.nama }}</td>
+              <td class="px-6 py-4">{{ t.kursus.nama }}</td>
+              <td class="px-6 py-4">Rp {{ t.total_harga|floatformat:0 }}</td>
+              <td class="px-6 py-4">
+                {% if t.is_paid == "yes" %}
+                  <span class="bg-green-100 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded">Dibayar</span>
+                {% else %}
+                  <span class="bg-red-100 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded">Belum</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-center py-6 text-gray-400">Belum ada transaksi.</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
