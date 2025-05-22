@@ -28,6 +28,8 @@ def mycourse1(request):
     context={}
     return render(request, "main/student/mycourse1.html", context)
 
+from django.contrib.auth.hashers import check_password
+
 def login_admin(request):
     if request.method == 'POST':
         form = AdminLoginForm(request.POST)
@@ -36,16 +38,21 @@ def login_admin(request):
             password = form.cleaned_data['password']
             
             try:
-                admin_user = Member.objects.get(email=email, password=password, role='admin')
-                request.session['admin_id'] = admin_user.id
-                request.session['admin_nama'] = admin_user.nama
-                return redirect('admin_dashboard')  # ganti sesuai URL dashboard admin kamu
+                admin_user = Member.objects.get(email=email, role='admin')
+
+                if check_password(password, admin_user.password):
+                    request.session['admin_id'] = admin_user.id
+                    request.session['admin_nama'] = admin_user.nama
+                    return redirect('admin_dashboard')
+                else:
+                    messages.error(request, 'Password salah.')
             except Member.DoesNotExist:
-                messages.error(request, 'Email atau password salah, atau Anda bukan admin.')
+                messages.error(request, 'Email tidak ditemukan atau Anda bukan admin.')
     else:
         form = AdminLoginForm()
 
     return render(request, 'main/admin/login.html', {'form': form})
+
 
 def admin_dashboard(request):
     if 'admin_id' not in request.session:
