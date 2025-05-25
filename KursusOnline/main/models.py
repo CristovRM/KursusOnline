@@ -15,6 +15,8 @@ class Member(models.Model):
 
     def __str__(self):
         return f"{self.nama} ({self.role})"
+    class Meta:
+        db_table = 'main_member'  # ← ini penting agar pakai tabel yang sudah ada
 
 class Kategori(models.Model):
     nama = models.CharField(max_length=255)

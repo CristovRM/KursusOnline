@@ -20,4 +20,7 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("main.urls")),
+    # Tambahkan ini untuk mengaktifkan API
+    path('api/', include('api.urls')),
 ]
+
