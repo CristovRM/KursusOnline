@@ -3,6 +3,7 @@ from django.contrib import messages
 from .forms import AdminLoginForm
 from .models import Member, Kursus, Transaksi, PendapatanAdmin
 from django.db.models import Sum
+import requests
 
 
 # Create your views here.
@@ -75,3 +76,8 @@ def admin_dashboard(request):
 def logout_admin(request):
     request.session.flush()
     return redirect('admin_login')
+
+def manage_user(request):
+    response = requests.get('http://127.0.0.1:8000/api/members/')
+    data = response.json()
+    return render(request, 'main/admin/manageuser.html', {'manage_user': data})
