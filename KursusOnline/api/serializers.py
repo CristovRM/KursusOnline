@@ -6,6 +6,9 @@ from main.models import (
 )
 
 class MemberSerializer(serializers.ModelSerializer):
+    # password tidak wajib, hanya tulis (write_only)
+    password = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Member
         fields = ['id', 'nama', 'email', 'pekerjaan', 'password', 'role']
@@ -15,9 +18,14 @@ class MemberSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
-        return super().update(instance, validated_data)
+        password = validated_data.pop('password', None)  # ambil password jika ada dan hapus dari dict
+        if password:
+            instance.password = make_password(password)
+        # update field lain
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 class KategoriSerializer(serializers.ModelSerializer):
     class Meta:

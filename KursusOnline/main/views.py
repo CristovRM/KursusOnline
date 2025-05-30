@@ -81,3 +81,56 @@ def manage_user(request):
     response = requests.get('http://127.0.0.1:8000/api/members/')
     data = response.json()
     return render(request, 'main/admin/manageuser.html', {'manage_user': data})
+    
+def add_user(request):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+            "email": request.POST['email'],
+            "password": request.POST['password'],
+            "pekerjaan": request.POST['pekerjaan'],
+            "role": request.POST['role'],
+            
+        }
+        response = requests.post('http://127.0.0.1:8000/api/members/', data=payload)
+
+        if response.status_code in [200, 201]:
+            return redirect('manage_user')
+        else:
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal menambahkan user.')
+            return render(request, 'main/admin/manageuser.html', {
+                'manage_user': requests.get('http://127.0.0.1:8000/api/members/').json(),
+                'error_message': error_message
+            })
+
+def edit_user(request, id):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+            "email": request.POST['email'],
+            "pekerjaan": request.POST['pekerjaan'],
+            "role": request.POST['role']
+        }
+
+        if request.POST.get('password'):
+            payload['password'] = request.POST['password']
+
+        response = requests.put(f"http://127.0.0.1:8000/api/members/{id}/", json=payload)
+
+        if response.status_code in [200, 204]:
+            return redirect('manage_user')
+        else:
+            print("API Error:", response.status_code, response.text)  # Debug
+            print("Response Content:", response.text)  # <-- print isi errornya di sini
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal mengedit user.')
+            return render(request, 'main/admin/manageuser.html', {
+                'manage_user': requests.get('http://127.0.0.1:8000/api/members/').json(),
+                'error_message': error_message
+            })
+
+def delete_user(request, id):
+    requests.delete(f'http://127.0.0.1:8000/api/members/{id}/')
+    return redirect('manage_user')
+
