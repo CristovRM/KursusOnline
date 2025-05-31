@@ -77,6 +77,8 @@ def logout_admin(request):
     request.session.flush()
     return redirect('admin_login')
 
+# Crud TABEL MEMBER.
+
 def manage_user(request):
     response = requests.get('http://127.0.0.1:8000/api/members/')
     data = response.json()
@@ -121,8 +123,8 @@ def edit_user(request, id):
         if response.status_code in [200, 204]:
             return redirect('manage_user')
         else:
-            print("API Error:", response.status_code, response.text)  # Debug
-            print("Response Content:", response.text)  # <-- print isi errornya di sini
+            print("API Error:", response.status_code, response.text)
+            print("Response Content:", response.text)
             response_data = response.json() if response.content else {}
             error_message = response_data.get('detail', 'Gagal mengedit user.')
             return render(request, 'main/admin/manageuser.html', {
