@@ -10,6 +10,11 @@ urlpatterns = [
     path("my-courses", views.mycourse, name="mycourse"),
     path("my-courses1", views.mycourse1, name="mycourse1"),
     
+    
+    # Pengajar
+    path('teacher/dashboard/', views.dashboard_pengajar, name='dashboard_pengajar'),
+    
+    
     # Admin
     path('login-admin', views.login_admin, name='admin_login'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),

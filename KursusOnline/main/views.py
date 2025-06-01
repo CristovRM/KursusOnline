@@ -3,6 +3,7 @@ from django.contrib import messages
 from .forms import AdminLoginForm
 from .models import Member, Kursus, Transaksi, PendapatanAdmin
 from django.db.models import Sum
+from .forms import UserLoginForm
 import requests
 
 
@@ -11,8 +12,36 @@ def home(request):
     context={}
     return render(request, "main/home.html", context)
 def login(request):
-    context={}
-    return render(request, "main/login.html", context)
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            try:
+                user = Member.objects.get(email=email)
+
+                if user.role not in ['peserta', 'pengajar']:
+                    messages.error(request, 'Akun Anda tidak diizinkan mengakses halaman ini.')
+                    return redirect('login_user')
+
+                if check_password(password, user.password):
+                    request.session['user_id'] = user.id
+                    request.session['user_nama'] = user.nama
+                    request.session['user_role'] = user.role
+                    
+                    if user.role == 'peserta':
+                        return redirect('peserta_dashboard')
+                    elif user.role == 'pengajar':
+                        return redirect('dashboard_pengajar')
+                else:
+                    messages.error(request, 'Password salah.')
+            except Member.DoesNotExist:
+                messages.error(request, 'Email tidak ditemukan.')
+    else:
+        form = UserLoginForm()
+
+    return render(request, 'main/login.html', {'form': form})
 def course(request):
     context={}
     return render(request, "main/course.html", context)
@@ -134,3 +163,10 @@ def delete_user(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/members/{id}/')
     return redirect('manage_user')
 
+def dashboard_pengajar(request):
+    if request.session.get('user_role') != 'pengajar':
+        return redirect('login_user')
+
+    return render(request, 'main/teacher/dashboard.html', {
+        'pengajar_nama': request.session.get('user_nama'),
+    })

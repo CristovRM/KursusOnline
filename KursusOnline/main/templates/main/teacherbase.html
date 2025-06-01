@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard Pengajar - ZapCourse{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+  <!-- Navbar untuk Pengajar -->
+  <nav class="bg-gray-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-8">
+          <a href="{% url 'dashboard_pengajar' %}" class="w-10 h-10 bg-gray-600 flex items-center justify-center rounded">
+            <span class="text-sm">Logo</span>
+          </a>
+          <div class="hidden md:flex space-x-6">
+            <a href="{% url 'dashboard_pengajar' %}" class="text-gray-300 hover:text-white">Dashboard</a>
+            <a href="#" class="text-gray-300 hover:text-white">Kursus Saya</a>
+            <a href="#" class="text-gray-300 hover:text-white">Pendapatan</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'logout_admin' %}" class="text-gray-300 hover:text-white">Logout</a>
+          <button id="menu-btn" class="text-white md:hidden focus:outline-none">☰</button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
+      <a href="{% url 'dashboard_pengajar' %}" class="block text-gray-300 hover:text-white">Dashboard</a>
+      <a href="#" class="block text-gray-300 hover:text-white">Kursus Saya</a>
+      <a href="#" class="block text-gray-300 hover:text-white">Pendapatan</a>
+      <a href="{% url 'logout_admin' %}" class="block text-gray-300 hover:text-white">Logout</a>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="bg-gray-800 text-gray-400 text-center py-4 mt-10">
+    &copy; 2025 ZapCourse - Pengajar. All rights reserved.
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    if(menuBtn) {
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+    }
+  </script>
+</body>
+</html>
