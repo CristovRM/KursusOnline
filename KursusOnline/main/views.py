@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import AdminLoginForm
-from .models import Member, Kursus, Transaksi, PendapatanAdmin
+from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating
 from django.db.models import Sum
 from .forms import UserLoginForm
+from django.db.models import Avg
 import requests
 
 
@@ -167,6 +168,19 @@ def dashboard_pengajar(request):
     if request.session.get('user_role') != 'pengajar':
         return redirect('login_user')
 
-    return render(request, 'main/teacher/dashboard.html', {
-        'pengajar_nama': request.session.get('user_nama'),
-    })
+    pengajar_id = request.session.get('user_id')
+    pengajar_nama = request.session.get('user_nama')
+
+    total_kursus = Kursus.objects.filter(pengajar_id=pengajar_id).count()
+    total_pendapatan = PendapatanPengajar.objects.filter(pengajar_id=pengajar_id).aggregate(total=Sum('jumlah'))['total'] or 0
+    rating_avg = Rating.objects.filter(kursus__pengajar_id=pengajar_id).aggregate(avg=Avg('rating'))['avg'] or 0
+    rating_avg = round(rating_avg, 2)
+
+    context = {
+        'pengajar_nama': pengajar_nama,
+        'total_kursus': total_kursus,
+        'total_pendapatan': total_pendapatan,
+        'rating_avg': rating_avg,
+    }
+
+    return render(request, 'main/teacher/dashboard.html', context)
