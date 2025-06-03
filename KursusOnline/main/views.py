@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import AdminLoginForm
-from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating
+from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir
 from django.db.models import Sum
 from .forms import UserLoginForm
 from django.db.models import Avg
+from django.shortcuts import render, get_object_or_404
 import requests
+from django.conf import settings
 
 
 # Create your views here.
@@ -184,3 +186,39 @@ def dashboard_pengajar(request):
     }
 
     return render(request, 'main/teacher/dashboard.html', context)
+
+def kursus_saya_pengajar(request):
+    if request.session.get('user_role') != 'pengajar':
+        return redirect('login_user')
+
+    pengajar_id = request.session.get('user_id')
+    pengajar_nama = request.session.get('user_nama')
+
+    kursus_list = Kursus.objects.filter(pengajar_id=pengajar_id).select_related('kategori')
+
+    context = {
+        'pengajar_nama': pengajar_nama,
+        'kursus_list': kursus_list,
+        'foto_url_prefix': settings.MEDIA_URL,
+    }
+
+    return render(request, 'main/teacher/kursus_saya.html', context)
+
+def detail_kursus_pengajar(request, kursus_id):
+    if request.session.get('user_role') != 'pengajar':
+        return redirect('login_user')
+
+    kursus = Kursus.objects.get(id=kursus_id)
+    
+    # Validasi: hanya pengajar yang punya kursus ini yang bisa lihat
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    materi_list = MateriKursus.objects.filter(kursus=kursus).order_by('urutan')
+
+    context = {
+        'kursus': kursus,
+        'materi_list': materi_list,
+    }
+
+    return render(request, 'main/teacher/detail_kursus.html', context)
