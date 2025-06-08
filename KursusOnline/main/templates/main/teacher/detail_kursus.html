@@ -22,7 +22,7 @@
           <div>
             <p class="font-semibold">{{ materi.judul }}</p>
             <p class="text-gray-500 text-sm">{{ materi.deskripsi }}</p>
-            <a href="{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">Lihat Materi</a>
+            <a href="{{ MEDIA_URL }}{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">Lihat Materi</a>
           </div>
         </li>
       {% endfor %}
