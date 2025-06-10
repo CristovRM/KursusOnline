@@ -219,6 +219,7 @@ def detail_kursus_pengajar(request, kursus_id):
     context = {
         'kursus': kursus,
         'materi_list': materi_list,
+        'MEDIA_URL': settings.MEDIA_URL,  # ← tambahkan ini agar bisa dipakai di template
     }
 
     return render(request, 'main/teacher/detail_kursus.html', context)

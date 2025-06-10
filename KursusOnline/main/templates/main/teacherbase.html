@@ -18,7 +18,7 @@
           </a>
           <div class="hidden md:flex space-x-6">
             <a href="{% url 'dashboard_pengajar' %}" class="text-gray-300 hover:text-white">Dashboard</a>
-            <a href="#" class="text-gray-300 hover:text-white">Kursus Saya</a>
+            <a href="{% url 'kursus_saya_pengajar' %}" class="text-gray-300 hover:text-white">Kursus Saya</a>
             <a href="#" class="text-gray-300 hover:text-white">Pendapatan</a>
           </div>
         </div>
@@ -30,7 +30,7 @@
     </div>
     <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
       <a href="{% url 'dashboard_pengajar' %}" class="block text-gray-300 hover:text-white">Dashboard</a>
-      <a href="#" class="block text-gray-300 hover:text-white">Kursus Saya</a>
+      <a href="{% url 'kursus_saya_pengajar' %}" class="block text-gray-300 hover:text-white">Kursus Saya</a>
       <a href="#" class="block text-gray-300 hover:text-white">Pendapatan</a>
       <a href="{% url 'logout_admin' %}" class="block text-gray-300 hover:text-white">Logout</a>
     </div>
