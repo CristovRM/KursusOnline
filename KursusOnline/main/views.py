@@ -222,3 +222,47 @@ def detail_kursus_pengajar(request, kursus_id):
     }
 
     return render(request, 'main/teacher/detail_kursus.html', context)
+
+# student
+def dashboard_student(request):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')  # atau login_user jika berbeda
+
+    peserta_id = request.session.get('user_id')
+    peserta_nama = request.session.get('user_nama')
+
+    # Jumlah kursus yang diikuti peserta
+    total_kursus_diikuti = Transaksi.objects.filter(user_id=peserta_id).count()
+
+    # Kursus yang diikuti (limit 5 terbaru)
+    kursus_diikuti = Transaksi.objects.select_related('kursus').filter(user_id=peserta_id).order_by('-id')[:5]
+
+    # Rata-rata rating yang diberikan oleh peserta (jika ada)
+    rating_diberikan = Rating.objects.filter(user_id=peserta_id).aggregate(avg=Avg('rating'))['avg'] or 0
+    rating_diberikan = round(rating_diberikan, 2)
+
+    context = {
+        'peserta_nama': peserta_nama,
+        'total_kursus_diikuti': total_kursus_diikuti,
+        'kursus_diikuti': kursus_diikuti,
+        'rating_diberikan': rating_diberikan,
+    }
+
+    return render(request, 'main/student/dashboard.html', context)
+
+def transaksi_peserta(request):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')  # Pastikan hanya peserta yang bisa akses
+
+    peserta_id = request.session.get('user_id')
+
+    # Ambil semua transaksi yang dilakukan peserta
+    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-tanggal_transaksi')
+
+    context = {
+        'transaksi_list': transaksi_list,
+        'peserta_nama': request.session.get('user_nama'),
+    }
+
+    return render(request, 'main/student/transaksi_peserta.html', context)
+

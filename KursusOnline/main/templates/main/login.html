@@ -1,12 +1,13 @@
 {% extends 'main/homebase.html' %}
+{% load static %}
 
 {% block title %}Login - ZapCourse{% endblock %}
 
 {% block content %}
 <main class="flex flex-col md:flex-row min-h-screen items-center justify-center px-6 py-12">
   <!-- Left Image -->
-  <div class="hidden md:flex md:w-1/2 h-96 bg-gray-800 items-center justify-center rounded-lg">
-    <img src="https://via.placeholder.com/200" alt="Illustration" class="opacity-80">
+  <div class="hidden md:flex md:w-1/2 h-full max-h-screen items-center justify-center rounded-lg p-4">
+    <img src="{% static 'main/images/login.svg' %}" alt="Login Illustration" class="w-full max-w-md h-auto opacity-90" />
   </div>
 
   <!-- Right Login Form -->

@@ -27,6 +27,12 @@ urlpatterns = [
     path('add_user/', views.add_user, name='add_user'),
     path('edit-user/<int:id>/', views.edit_user, name='edit_user'),
     path('delete-user/<int:id>/', views.delete_user, name='delete_user'),
+    
+    # Student
+    path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
+    path('student/mycourse/', views.mycourse, name='mycourse'),
+    path('student/transaksi/', views.transaksi_peserta, name='transaksi_peserta'),
+
 ]
 
 if settings.DEBUG:

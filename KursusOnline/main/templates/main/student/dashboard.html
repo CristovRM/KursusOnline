@@ -1,11 +1,29 @@
-{% extends 'main/homebase.html' %}
+{% extends "main/student/studentbase.html" %}
 {% load static %}
 
-{% block title %}Courses - ZapCourse{% endblock %}
+{% block title %}Dashboard Peserta{% endblock %}
 
 {% block content %}
-<!-- Filter -->
-<section class="max-w-7xl mx-auto mt-10 px-4">
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <h1 class="text-3xl font-bold mb-6">Selamat datang, {{ peserta_nama }}! 👋</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gray-800 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Total Kursus Diikuti</h2>
+      <p class="text-4xl font-bold text-yellow-400">{{ total_kursus_diikuti }}</p>
+    </div>
+    <div class="bg-gray-800 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Rating Rata-rata</h2>
+      <p class="text-4xl font-bold text-green-400">{{ rating_diberikan }}</p>
+    </div>
+    <div class="bg-gray-800 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Status</h2>
+      <p class="text-lg text-gray-300">Aktif</p>
+    </div>
+  </div>
+  
+  <!-- Filter -->
+<section class="max-w-7xl mx-auto mt-20 px-4">
   <div class="flex justify-center">
     <select id="categoryFilter" class="text-gray-700 px-4 py-2 rounded-md border border-gray-300 w-full max-w-sm">
       <option value="All">All Categories</option>
@@ -17,7 +35,7 @@
   </div>
 </section>
 
-<!-- Courses -->
+  <!-- Courses -->
 <section class="max-w-7xl mx-auto px-4 mt-10">
   <div id="courseContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     <!-- Web Development -->
