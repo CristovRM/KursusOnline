@@ -16,7 +16,9 @@ urlpatterns = [
     path('teacher/dashboard/', views.dashboard_pengajar, name='dashboard_pengajar'),
     path('teacher/my-course/', views.kursus_saya_pengajar, name='kursus_saya_pengajar'),
     path('teacher/my-course/<int:kursus_id>/', views.detail_kursus_pengajar, name='detail_kursus_pengajar'),
-
+    path('teacher/my-course/<int:kursus_id>/materi/tambah/', views.tambah_materi, name='tambah_materi'),
+    path('teacher/my-course/materi/<int:pk>/edit/', views.edit_materi, name='edit_materi'),
+    path('teacher/my-course/materi/<int:pk>/hapus/', views.hapus_materi, name='hapus_materi'),
 
     # Admin
     path('login-admin', views.login_admin, name='admin_login'),

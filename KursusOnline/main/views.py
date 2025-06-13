@@ -4,6 +4,7 @@ from .forms import AdminLoginForm
 from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir
 from django.db.models import Sum
 from .forms import UserLoginForm
+from .forms import MateriForm
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404
 import requests
@@ -267,3 +268,45 @@ def transaksi_peserta(request):
 
     return render(request, 'main/student/transaksi_peserta.html', context)
 
+def tambah_materi(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    if request.method == 'POST':
+        form = MateriForm(request.POST, request.FILES)
+        if form.is_valid():
+            materi = form.save(commit=False)
+            materi.kursus = kursus
+            materi.save()
+            return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
+    else:
+        form = MateriForm()
+
+    return render(request, 'main/teacher/form_materi.html', {'form': form, 'kursus': kursus, 'mode': 'Tambah'})
+
+def edit_materi(request, pk):
+    materi = get_object_or_404(MateriKursus, pk=pk)
+
+    if materi.kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    if request.method == 'POST':
+        form = MateriForm(request.POST, request.FILES, instance=materi)
+        if form.is_valid():
+            form.save()
+            return redirect('detail_kursus_pengajar', kursus_id=materi.kursus.id)
+    else:
+        form = MateriForm(instance=materi)
+
+    return render(request, 'main/teacher/form_materi.html', {'form': form, 'kursus': materi.kursus, 'mode': 'Edit'})
+
+def hapus_materi(request, pk):
+    materi = get_object_or_404(MateriKursus, pk=pk)
+    kursus_id = materi.kursus.id
+
+    if materi.kursus.pengajar.id == request.session.get('user_id'):
+        materi.delete()
+
+    return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
