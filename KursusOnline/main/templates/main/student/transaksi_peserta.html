@@ -22,9 +22,19 @@
         <tr class="hover:bg-gray-700">
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ forloop.counter }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-yellow-400">{{ transaksi.kursus.nama }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ transaksi.tanggal_transaksi|date:"d M Y H:i" }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">{{ transaksi.status }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-yellow-400">Rp {{ transaksi.jumlah_bayar|intcomma }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+            {{ transaksi.subscription_start_date|date:"d M Y H:i" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">
+            {% if transaksi.is_paid %}
+              Lunas
+            {% else %}
+              Belum Lunas
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-yellow-400">
+            Rp {{ transaksi.total_harga|stringformat:"d" }}
+          </td>
         </tr>
         {% empty %}
         <tr>

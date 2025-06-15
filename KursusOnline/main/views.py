@@ -258,7 +258,7 @@ def transaksi_peserta(request):
     peserta_id = request.session.get('user_id')
 
     # Ambil semua transaksi yang dilakukan peserta
-    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-tanggal_transaksi')
+    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-subscription_start_date')
 
     context = {
         'transaksi_list': transaksi_list,
@@ -267,3 +267,20 @@ def transaksi_peserta(request):
 
     return render(request, 'main/student/transaksi_peserta.html', context)
 
+def certificate_view(request):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')  # Hanya peserta yang bisa akses
+
+    peserta_nama = request.session.get('user_nama')
+
+    # Untuk sekarang hardcode dulu datanya
+    context = {
+        'participant_name': peserta_nama,
+        'course_name': "Intro to Web Development",
+        'completion_date': "June 11, 2025",
+        'instructor_name': "Ms. Nora Lecturer",
+        'certificate_number': "WD-2025-00123",
+        'platform_name': "KursusOnline"
+    }
+
+    return render(request, 'main/student/certificate.html', context)
