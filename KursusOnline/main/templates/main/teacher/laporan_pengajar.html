@@ -1,0 +1,28 @@
+{% extends 'main/teacherbase.html' %}
+{% block title %}Laporan Pengajar{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Laporan Pengajar</h1>
+
+    <div class="mb-8 bg-gray-800 p-6 rounded-lg shadow">
+      <h2 class="text-xl font-semibold mb-4">Ringkasan</h2>
+      <p>Total Penghasilan: <strong>Rp {{ total_pendapatan|floatformat:0 }}</strong></p>
+      <p>Total Peserta: <strong>{{ total_peserta }}</strong></p>
+    </div>
+
+    <div class="space-y-6">
+      {% for data in laporan_kursus %}
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+          <h3 class="text-lg font-semibold">{{ data.kursus.nama }}</h3>
+          <p>Penghasilan: Rp {{ data.pendapatan|floatformat:0 }}</p>
+          <p>Jumlah Peserta: {{ data.peserta }}</p>
+        </div>
+      {% empty %}
+        <p class="text-gray-400">Belum ada kursus.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

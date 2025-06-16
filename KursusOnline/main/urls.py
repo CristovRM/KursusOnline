@@ -1,5 +1,6 @@
 from . import views
 from django.urls import path
+from .views import laporan_pengajar
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -21,6 +22,8 @@ urlpatterns = [
     path('teacher/my-course/materi/<int:pk>/hapus/', views.hapus_materi, name='hapus_materi'),
     path('teacher/my-course/<int:kursus_id>/peserta/', views.daftar_peserta, name='daftar_peserta'),
     path('teacher/my-course/<int:kursus_id>/ulasan/', views.lihat_ulasan, name='lihat_ulasan'),
+    path('teacher/laporan/', laporan_pengajar, name='laporan_pengajar'),
+    path('logout/', views.logout, name='logout'),
 
 
 
@@ -28,7 +31,6 @@ urlpatterns = [
     path('login-admin', views.login_admin, name='admin_login'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-logout/', views.logout_admin, name='logout_admin'),
-
     path('manage-user/', views.manage_user, name='manage_user'),
     path('add_user/', views.add_user, name='add_user'),
     path('edit-user/<int:id>/', views.edit_user, name='edit_user'),
