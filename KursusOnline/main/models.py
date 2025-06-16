@@ -54,7 +54,7 @@ class MateriKursus(models.Model):
     judul = models.CharField(max_length=255)
     deskripsi = models.TextField()
     tipe_materi = models.CharField(max_length=10, choices=TIPE_MATERI_CHOICES)
-    file_url = models.CharField(max_length=255)
+    file_url = models.FileField(upload_to='materi_files/')
     urutan = models.IntegerField()
 
     def __str__(self):

@@ -10,30 +10,17 @@
     <form method="post" enctype="multipart/form-data" class="space-y-6">
       {% csrf_token %}
 
-      <div>
-        <label for="id_judul" class="block text-sm font-medium text-gray-200 mb-1">Judul</label>
-        {{ form.judul }}
-      </div>
-
-      <div>
-        <label for="id_deskripsi" class="block text-sm font-medium text-gray-200 mb-1">Deskripsi</label>
-        {{ form.deskripsi }}
-      </div>
-
-      <div>
-        <label for="id_tipe_materi" class="block text-sm font-medium text-gray-200 mb-1">Tipe Materi</label>
-        {{ form.tipe_materi }}
-      </div>
-
-      <div>
-        <label for="id_urutan" class="block text-sm font-medium text-gray-200 mb-1">Urutan</label>
-        {{ form.urutan }}
-      </div>
-
-      <div>
-        <label for="id_file_url" class="block text-sm font-medium text-gray-200 mb-1">Upload File</label>
-        {{ form.file_url }}
-      </div>
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-200 mb-1">
+            {{ field.label }}
+          </label>
+          {{ field }}
+          {% if field.errors %}
+            <p class="text-red-400 text-sm mt-1">{{ field.errors|striptags }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
 
       <button type="submit"
               class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-150">
