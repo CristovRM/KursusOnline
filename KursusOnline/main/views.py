@@ -340,3 +340,16 @@ def daftar_peserta(request, kursus_id):
         'kursus': kursus,
         'peserta_transaksi': peserta_transaksi
     })
+def lihat_ulasan(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    # Pastikan hanya pengajar kursus ini yang bisa melihat
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    ulasan_list = Rating.objects.filter(kursus=kursus).select_related('user')
+
+    return render(request, 'main/teacher/ulasan_kursus.html', {
+        'kursus': kursus,
+        'ulasan_list': ulasan_list
+    })

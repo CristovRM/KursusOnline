@@ -20,6 +20,8 @@ urlpatterns = [
     path('teacher/my-course/materi/<int:pk>/edit/', views.edit_materi, name='edit_materi'),
     path('teacher/my-course/materi/<int:pk>/hapus/', views.hapus_materi, name='hapus_materi'),
     path('teacher/my-course/<int:kursus_id>/peserta/', views.daftar_peserta, name='daftar_peserta'),
+    path('teacher/my-course/<int:kursus_id>/ulasan/', views.lihat_ulasan, name='lihat_ulasan'),
+
 
 
     # Admin
