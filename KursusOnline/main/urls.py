@@ -19,6 +19,8 @@ urlpatterns = [
     path('teacher/my-course/<int:kursus_id>/materi/tambah/', views.tambah_materi, name='tambah_materi'),
     path('teacher/my-course/materi/<int:pk>/edit/', views.edit_materi, name='edit_materi'),
     path('teacher/my-course/materi/<int:pk>/hapus/', views.hapus_materi, name='hapus_materi'),
+    path('teacher/my-course/<int:kursus_id>/peserta/', views.daftar_peserta, name='daftar_peserta'),
+
 
     # Admin
     path('login-admin', views.login_admin, name='admin_login'),

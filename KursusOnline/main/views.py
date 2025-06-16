@@ -325,3 +325,18 @@ def hapus_materi(request, pk):
         materi.delete()
 
     return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
+
+def daftar_peserta(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    # Pastikan pengajar kursus ini adalah yang login
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    # Ambil semua transaksi yang berhasil dibayar untuk kursus ini
+    peserta_transaksi = Transaksi.objects.filter(kursus=kursus, is_paid='yes').select_related('user')
+
+    return render(request, 'main/teacher/daftar_peserta.html', {
+        'kursus': kursus,
+        'peserta_transaksi': peserta_transaksi
+    })
