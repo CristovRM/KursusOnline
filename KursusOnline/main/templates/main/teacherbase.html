@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,33 +9,34 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-  <!-- Navbar untuk Pengajar -->
   <nav class="bg-gray-800 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center space-x-8">
-          <a href="{% url 'dashboard_pengajar' %}" class="w-10 h-10 bg-gray-600 flex items-center justify-center rounded">
-            <span class="text-sm">Logo</span>
-          </a>
-          <div class="hidden md:flex space-x-6">
-            <a href="{% url 'dashboard_pengajar' %}" class="text-gray-300 hover:text-white">Dashboard</a>
-            <a href="{% url 'kursus_saya_pengajar' %}" class="text-gray-300 hover:text-white">Kursus Saya</a>
-            <a href="#" class="text-gray-300 hover:text-white">Pendapatan</a>
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <a href="{% url 'logout_admin' %}" class="text-gray-300 hover:text-white">Logout</a>
-          <button id="menu-btn" class="text-white md:hidden focus:outline-none">☰</button>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex items-center space-x-8">
+        <!-- Logo Sama Seperti Halaman Utama -->
+        <a href="{% url 'dashboard_pengajar' %}" class="w-15 h-15 flex items-center justify-center rounded">
+          <img src="{% static 'main/images/logo1.png' %}" alt="ZapCourse Logo" class="max-h-12 object-contain">
+        </a>
+        <div class="hidden md:flex space-x-6">
+          <a href="{% url 'dashboard_pengajar' %}" class="text-gray-300 hover:text-white">Dashboard</a>
+          <a href="{% url 'kursus_saya_pengajar' %}" class="text-gray-300 hover:text-white">Kursus Saya</a>
+          <a href="{% url 'laporan_pengajar' %}" class="text-gray-300 hover:text-white">Laporan</a>
         </div>
       </div>
+      <div class="flex items-center space-x-4">
+        <a href="{% url 'logout' %}" class="text-gray-300 hover:text-white">Logout</a>
+        <button id="menu-btn" class="text-white md:hidden focus:outline-none">☰</button>
+      </div>
     </div>
-    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
-      <a href="{% url 'dashboard_pengajar' %}" class="block text-gray-300 hover:text-white">Dashboard</a>
-      <a href="{% url 'kursus_saya_pengajar' %}" class="block text-gray-300 hover:text-white">Kursus Saya</a>
-      <a href="#" class="block text-gray-300 hover:text-white">Pendapatan</a>
-      <a href="{% url 'logout_admin' %}" class="block text-gray-300 hover:text-white">Logout</a>
-    </div>
-  </nav>
+  </div>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
+    <a href="{% url 'dashboard_pengajar' %}" class="block text-gray-300 hover:text-white">Dashboard</a>
+    <a href="{% url 'kursus_saya_pengajar' %}" class="block text-gray-300 hover:text-white">Kursus Saya</a>
+    <a href="#" class="block text-gray-300 hover:text-white">Laporan</a>
+    <a href="{% url 'logout' %}" class="block text-gray-300 hover:text-white">Logout</a>
+  </div>
+</nav>
 
   {% block content %}{% endblock %}
 

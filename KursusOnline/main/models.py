@@ -54,7 +54,7 @@ class MateriKursus(models.Model):
     judul = models.CharField(max_length=255)
     deskripsi = models.TextField()
     tipe_materi = models.CharField(max_length=10, choices=TIPE_MATERI_CHOICES)
-    file_url = models.CharField(max_length=255)
+    file_url = models.FileField(upload_to='materi_files/')
     urutan = models.IntegerField()
 
     def __str__(self):
@@ -114,3 +114,43 @@ class Sertifikat(models.Model):
 
     def __str__(self):
         return f"{self.nomor_sertifikat} - {self.user.nama}"
+    
+def laporan_pengajar(request):
+    pengajar_id = request.session.get('user_id')
+    
+    # Validasi pengajar
+    if not pengajar_id:
+        return redirect('login')
+
+    # Ambil semua kursus milik pengajar
+    kursus_list = Kursus.objects.filter(pengajar_id=pengajar_id)
+
+    laporan_kursus = []
+    total_pendapatan = 0
+    total_peserta = 0
+
+    for kursus in kursus_list:
+        pendapatan = PendapatanPengajar.objects.filter(
+            pengajar_id=pengajar_id,
+            transaksi__kursus=kursus
+        ).aggregate(total=Sum('jumlah'))['total'] or 0
+
+        peserta_count = Transaksi.objects.filter(
+            kursus=kursus,
+            is_paid='yes'
+        ).count()
+
+        total_pendapatan += pendapatan
+        total_peserta += peserta_count
+
+        laporan_kursus.append({
+            'kursus': kursus,
+            'pendapatan': pendapatan,
+            'peserta': peserta_count
+        })
+
+    return render(request, 'main/teacher/laporan_pengajar.html', {
+        'laporan_kursus': laporan_kursus,
+        'total_pendapatan': total_pendapatan,
+        'total_peserta': total_peserta
+    })

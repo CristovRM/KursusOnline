@@ -1,0 +1,25 @@
+{% extends 'main/teacherbase.html' %}
+
+{% block title %}Ulasan Kursus - {{ kursus.nama }}{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Ulasan untuk: {{ kursus.nama }}</h1>
+
+    {% if ulasan_list %}
+      <ul class="space-y-4">
+        {% for ulasan in ulasan_list %}
+          <li class="border rounded-lg p-4 bg-gray-800 shadow-sm hover:shadow-md transition">
+            <p class="font-semibold">{{ ulasan.user.nama }} - ⭐ {{ ulasan.rating }}/5</p>
+            <p class="text-gray-300 text-sm">{{ ulasan.review }}</p>
+            <p class="text-gray-500 text-xs mt-1">Ditulis pada: {{ ulasan.created_at|date:"d M Y" }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-400 italic">Belum ada ulasan dari peserta.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
