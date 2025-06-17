@@ -1,48 +1,58 @@
 {% extends "main/student/studentbase.html" %}
 
-{% block title %}Transaksi Peserta{% endblock %}
+{% block title %}Formulir Pembelian Kursus{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto py-10 px-4">
-  <h1 class="text-3xl font-bold mb-6">Halo, {{ peserta_nama }}! Berikut daftar transaksi Anda:</h1>
+<div class="flex justify-center items-center min-h-screen bg-gray-900 text-white px-4">
+  <div class="bg-gray-800 rounded-xl p-8 shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-2">Formulir Pembelian Kursus</h2>
+    <p class="text-center text-sm text-gray-400 mb-6">
+      Isi formulir di bawah untuk menyelesaikan pembelian kursus.
+    </p>
 
-  <div class="bg-gray-800 rounded-2xl p-6 shadow">
-    <table class="min-w-full divide-y divide-gray-700">
-      <thead>
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">No.</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Kursus</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tanggal Transaksi</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Jumlah Bayar</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-700">
-        {% for transaksi in transaksi_list %}
-        <tr class="hover:bg-gray-700">
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ forloop.counter }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-yellow-400">{{ transaksi.kursus.nama }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-            {{ transaksi.subscription_start_date|date:"d M Y H:i" }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">
-            {% if transaksi.is_paid %}
-              Lunas
-            {% else %}
-              Belum Lunas
-            {% endif %}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-yellow-400">
-            Rp {{ transaksi.total_harga|stringformat:"d" }}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="px-6 py-4 text-center text-gray-400">Belum ada transaksi.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-4">
+        <label class="block text-sm mb-1" for="nama">Nama Lengkap</label>
+        <input type="text" id="nama" name="nama" placeholder="Masukkan Nama Lengkap"
+               class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm mb-1" for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="contoh@email.com"
+               class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm mb-1" for="telepon">Nomor Telepon</label>
+        <input type="text" id="telepon" name="telepon" placeholder="cth: 081234567890"
+               class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm mb-1" for="metode">Metode Pembayaran</label>
+        <select id="metode" name="metode"
+                class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <option value="">Pilih Metode</option>
+          <option value="transfer">Transfer Bank</option>
+          <option value="ewallet">E-Wallet</option>
+          <option value="cod">COD</option>
+        </select>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm mb-1" for="bukti">Unggah Bukti Pembayaran (Opsional)</label>
+        <input type="file" id="bukti" name="bukti"
+               class="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <button type="submit"
+              class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-200">
+        Beli Kursus
+      </button>
+    </form>
   </div>
 </div>
 {% endblock %}

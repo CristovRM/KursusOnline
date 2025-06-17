@@ -1,82 +1,110 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Certificate of Completion</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        @media print {
-            .no-print {
-                display: none;
-            }
-            body {
-                margin: 0;
-            }
-        }
+  <meta charset="UTF-8" />
+  <title>Certificate of Appreciation</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-        body {
-            background-image: url("{% static 'main/images/motif.png' %}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-    </style>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+    }
+
+    .gold-text {
+      color: #d4af37;
+    }
+
+    .gold-border {
+      border-color: #d4af37;
+    }
+
+    .gold-bg {
+      background-color: #d4af37;
+    }
+
+    .no-print {
+      display: block;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+<body class="flex items-center justify-center min-h-screen px-4 py-8 text-white">
 
-    <!-- Sertifikat -->
-    <div class="bg-white border border-gray-300 shadow-lg w-[900px] h-[640px] p-10 relative overflow-hidden">
-        <!-- Logo -->
-        <div class="absolute top-8 left-10 flex items-center space-x-3">
-            <img src="{% static 'main/images/logoooo.png' %}" alt="Logo" class="w-16 h-16">
-            <div>
-                <p class="text-sm font-semibold text-gray-800 uppercase">Your Platform Name</p>
-                <p class="text-xs text-gray-500">Learning Certificate</p>
-            </div>
+  <!-- Tombol Download -->
+  <div class="fixed top-6 right-6 z-50 no-print">
+    <button onclick="downloadPDF()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 rounded shadow">
+      Download as PDF
+    </button>
+  </div>
+
+  <!-- Sertifikat -->
+  <div id="certificate" class="bg-gradient-to-b from-gray-900 to-gray-800 w-[900px] h-[600px] rounded-xl shadow-2xl overflow-hidden border border-gray-700 px-10 py-12 text-center">
+
+    <!-- Header -->
+    <h1 class="text-3xl font-bold uppercase gold-text tracking-wider">Certificate</h1>
+    <p class="uppercase text-sm gold-text mt-1 tracking-wider">of appreciation</p>
+
+    <!-- Subheading -->
+    <p class="text-sm mt-6 text-gray-200">Proudly Presented To</p>
+
+    <!-- Nama -->
+    <h2 class="text-4xl mt-2 font-serif italic gold-text">{{ participant_name }}</h2>
+
+    <!-- Deskripsi -->
+    <p class="mt-6 text-gray-300 max-w-xl mx-auto text-sm leading-relaxed">
+      For successfully completing the course <span class="italic gold-text">{{ course_name }}</span><br>
+      held by <span class="text-white font-semibold">{{ platform_name }}</span> on <span class="gold-text">{{ completion_date }}</span>.
+    </p>
+
+    <!-- Emblem -->
+    <div class="mt-8 flex items-center justify-center">
+      <div class="rounded-full border-4 gold-border w-24 h-24 flex items-center justify-center text-xs font-semibold text-black gold-bg">
+        <div>
+          <p class="text-[10px] uppercase">Award</p>
+          <p class="text-base">{{ year }}</p>
         </div>
-
-        <!-- Pita kanan -->
-        <div class="absolute top-0 right-0 w-40 h-full bg-gray-100 border-l border-gray-300 flex flex-col justify-center items-center">
-            <p class="text-xs text-gray-500 tracking-widest uppercase">Course Certificate</p>
-            <div class="w-20 h-20 mt-4 border-2 border-gray-400 rounded-full flex items-center justify-center text-center text-[10px] text-gray-600">
-                Certified<br>Achievement
-            </div>
-        </div>
-
-        <!-- Isi Sertifikat -->
-        <div class="pt-24 pr-48 pl-10">
-            <p class="text-sm text-gray-500 mb-2">{{ completion_date }}</p>
-            <h2 class="text-3xl font-serif font-bold text-gray-800 uppercase tracking-wide mb-2">{{ participant_name }}</h2>
-            <p class="text-sm text-gray-600 mb-6">has successfully completed</p>
-            <p class="text-lg font-medium text-gray-800 italic">{{ course_name }}</p>
-            <p class="text-xs text-gray-500 mt-2">an online course offered by {{ platform_name }}</p>
-
-            <!-- Signature -->
-            <div class="flex justify-between items-end mt-16">
-                <div>
-                    <p class="text-sm font-semibold text-gray-700">Instructor</p>
-                    <p class="text-sm text-gray-600">{{ instructor_name }}</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-gray-700">Certificate No.</p>
-                    <p class="text-sm text-gray-600">#{{ certificate_number }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="absolute bottom-4 left-0 right-0 text-center text-[10px] text-gray-500">
-            This certificate is issued electronically and is valid without a signature or seal.
-        </div>
+      </div>
     </div>
 
-    <!-- Tombol Cetak -->
-    <div class="mt-6 no-print">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
-            Download / Print Certificate
-        </button>
+    <!-- Tanda Tangan -->
+    <div class="mt-10 flex justify-between px-10 text-xs text-gray-300">
+      <div>
+        <div class="border-t border-gray-500 w-40 mx-auto mb-1"></div>
+        <p>{{ instructor_name }}</p>
+      </div>
+      <div>
+        <div class="border-t border-gray-500 w-40 mx-auto mb-1"></div>
+        <p>Certificate No: #{{ certificate_number }}</p>
+      </div>
     </div>
+
+    <!-- Footer -->
+    <p class="text-[10px] mt-6 text-gray-500">
+      This certificate is issued electronically and is valid without a signature or seal.
+    </p>
+  </div>
+
+  <!-- Script Download PDF -->
+  <script>
+    function downloadPDF() {
+      const element = document.getElementById('certificate');
+      const opt = {
+        margin:       0,
+        filename:     'certificate.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
 
 </body>
 </html>

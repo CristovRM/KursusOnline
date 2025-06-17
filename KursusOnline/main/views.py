@@ -254,20 +254,40 @@ def dashboard_student(request):
 
 def transaksi_peserta(request):
     if request.session.get('user_role') != 'peserta':
-        return redirect('login')  # Pastikan hanya peserta yang bisa akses
+        return redirect('login')
 
-    peserta_id = request.session.get('user_id')
+    if request.method == 'POST':
+        nama = request.POST.get('nama')
+        email = request.POST.get('email')
+        telepon = request.POST.get('telepon')
+        metode = request.POST.get('metode')
+        bukti = request.FILES.get('bukti')  # Optional
+        
+        peserta_id = request.session.get('user_id')
+        kursus_id = request.GET.get('kursus_id')  # Asumsikan id kursus dikirim via URL
 
-    # Ambil semua transaksi yang dilakukan peserta
-    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-tanggal_transaksi')
+        try:
+            kursus = Kursus.objects.get(id=kursus_id)
+        except Kursus.DoesNotExist:
+            return render(request, 'main/student/transaksi_peserta.html', {
+                'error': 'Kursus tidak ditemukan.'
+            })
 
-    context = {
-        'transaksi_list': transaksi_list,
-        'peserta_nama': request.session.get('user_nama'),
-    }
+        transaksi = Transaksi.objects.create(
+            user_id=peserta_id,
+            kursus=kursus,
+            total_harga=kursus.harga,
+            subscription_start_date=timezone.now(),
+            is_paid=False,  # default belum lunas
+            bukti=bukti,
+        )
 
-    return render(request, 'main/student/transaksi_peserta.html', context)
+        return redirect('transaksi_berhasil')  # ganti dengan nama url yang sesuai
 
+    # Untuk metode GET, hanya tampilkan form pembelian
+    return render(request, 'main/student/transaksi_peserta.html', {
+        'peserta_nama': request.session.get('user_nama')
+    })
 def tambah_materi(request, kursus_id):
     kursus = get_object_or_404(Kursus, id=kursus_id)
 
