@@ -8,6 +8,13 @@
     <h1 class="text-3xl font-bold mb-6">{{ kursus.nama }}</h1>
     <p class="text-gray-600 mb-10">{{ kursus.deskripsi }}</p>
 
+    <!-- Tombol Tambah Materi -->
+    <div class="mb-6">
+      <a href="{% url 'tambah_materi' kursus.id %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        + Tambah Materi
+      </a>
+    </div>
+
     <h2 class="text-xl font-semibold mb-4">Materi & Tugas</h2>
     <ul class="space-y-4">
       {% for materi in materi_list %}
@@ -19,12 +26,22 @@
               🎥
             {% endif %}
           </div>
-          <div>
+          <div class="flex-1">
             <p class="font-semibold">{{ materi.judul }}</p>
             <p class="text-gray-500 text-sm">{{ materi.deskripsi }}</p>
-            <a href="{{ MEDIA_URL }}{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">Lihat Materi</a>
+            <a href="{{ MEDIA_URL }}{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
+              Lihat Materi
+            </a>
+            <div class="mt-2 space-x-4">
+              <a href="{% url 'edit_materi' materi.pk %}" class="text-green-600 text-sm hover:underline">Edit</a>
+              <a href="{% url 'hapus_materi' materi.pk %}" class="text-red-600 text-sm hover:underline" onclick="return confirm('Hapus materi ini?');">
+                Hapus
+              </a>
+            </div>
           </div>
         </li>
+      {% empty %}
+        <li class="text-gray-400 italic">Belum ada materi ditambahkan.</li>
       {% endfor %}
 
       {% if tugas_akhir %}

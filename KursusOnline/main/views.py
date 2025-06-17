@@ -4,6 +4,7 @@ from .forms import AdminLoginForm
 from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir
 from django.db.models import Sum
 from .forms import UserLoginForm
+from .forms import MateriForm
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404
 import requests
@@ -258,7 +259,7 @@ def transaksi_peserta(request):
     peserta_id = request.session.get('user_id')
 
     # Ambil semua transaksi yang dilakukan peserta
-    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-subscription_start_date')
+    transaksi_list = Transaksi.objects.filter(user_id=peserta_id).select_related('kursus').order_by('-tanggal_transaksi')
 
     context = {
         'transaksi_list': transaksi_list,
@@ -266,6 +267,134 @@ def transaksi_peserta(request):
     }
 
     return render(request, 'main/student/transaksi_peserta.html', context)
+
+def tambah_materi(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    # Cek kepemilikan kursus
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    if request.method == 'POST':
+        form = MateriForm(request.POST, request.FILES, kursus=kursus)
+        if form.is_valid():
+            materi = form.save(commit=False)
+            materi.kursus = kursus
+            materi.save()
+            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
+    else:
+        form = MateriForm(kursus=kursus)
+
+    return render(request, 'main/teacher/form_materi.html', {
+        'form': form,
+        'kursus': kursus,
+        'mode': 'Tambah'
+    })
+
+def edit_materi(request, pk):
+    materi = get_object_or_404(MateriKursus, pk=pk)
+    kursus = materi.kursus
+
+    # Cek kepemilikan kursus
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    if request.method == 'POST':
+        form = MateriForm(request.POST, request.FILES, instance=materi, kursus=kursus)
+        if form.is_valid():
+            updated_materi = form.save(commit=False)
+            if not request.FILES.get('file_url'):
+                updated_materi.file_url = materi.file_url  # file tetap jika tidak diubah
+            updated_materi.save()
+            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
+    else:
+        form = MateriForm(instance=materi, kursus=kursus)
+
+    return render(request, 'main/teacher/form_materi.html', {
+        'form': form,
+        'kursus': kursus,
+        'mode': 'Edit'
+    })
+
+
+def hapus_materi(request, pk):
+    materi = get_object_or_404(MateriKursus, pk=pk)
+    kursus_id = materi.kursus.id
+
+    if materi.kursus.pengajar.id == request.session.get('user_id'):
+        materi.delete()
+
+    return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
+
+def daftar_peserta(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    # Pastikan pengajar kursus ini adalah yang login
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    # Ambil semua transaksi yang berhasil dibayar untuk kursus ini
+    peserta_transaksi = Transaksi.objects.filter(kursus=kursus, is_paid='yes').select_related('user')
+
+    return render(request, 'main/teacher/daftar_peserta.html', {
+        'kursus': kursus,
+        'peserta_transaksi': peserta_transaksi
+    })
+def lihat_ulasan(request, kursus_id):
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
+    # Pastikan hanya pengajar kursus ini yang bisa melihat
+    if kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    ulasan_list = Rating.objects.filter(kursus=kursus).select_related('user')
+
+    return render(request, 'main/teacher/ulasan_kursus.html', {
+        'kursus': kursus,
+        'ulasan_list': ulasan_list
+    })
+def laporan_pengajar(request):
+    pengajar_id = request.session.get('user_id')
+    
+    # Validasi pengajar
+    if not pengajar_id:
+        return redirect('login')
+
+    # Ambil semua kursus milik pengajar
+    kursus_list = Kursus.objects.filter(pengajar_id=pengajar_id)
+
+    laporan_kursus = []
+    total_pendapatan = 0
+    total_peserta = 0
+
+    for kursus in kursus_list:
+        pendapatan = PendapatanPengajar.objects.filter(
+            pengajar_id=pengajar_id,
+            transaksi__kursus=kursus
+        ).aggregate(total=Sum('jumlah'))['total'] or 0
+
+        peserta_count = Transaksi.objects.filter(
+            kursus=kursus,
+            is_paid='yes'
+        ).count()
+
+        total_pendapatan += pendapatan
+        total_peserta += peserta_count
+
+        laporan_kursus.append({
+            'kursus': kursus,
+            'pendapatan': pendapatan,
+            'peserta': peserta_count
+        })
+
+    return render(request, 'main/teacher/laporan_pengajar.html', {
+        'laporan_kursus': laporan_kursus,
+        'total_pendapatan': total_pendapatan,
+        'total_peserta': total_peserta
+    })
+def logout(request):
+    request.session.flush()
+    return redirect('login')
 
 def certificate_view(request):
     if request.session.get('user_role') != 'peserta':
