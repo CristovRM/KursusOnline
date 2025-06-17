@@ -272,28 +272,19 @@ def tambah_materi(request, kursus_id):
     kursus = get_object_or_404(Kursus, id=kursus_id)
 
     # Cek kepemilikan kursus
-    # Cek kepemilikan kursus
     if kursus.pengajar.id != request.session.get('user_id'):
         return redirect('kursus_saya_pengajar')
 
     if request.method == 'POST':
-        form = MateriForm(request.POST, request.FILES, kursus=kursus)
         form = MateriForm(request.POST, request.FILES, kursus=kursus)
         if form.is_valid():
             materi = form.save(commit=False)
             materi.kursus = kursus
             materi.save()
             return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
-            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
     else:
         form = MateriForm(kursus=kursus)
-        form = MateriForm(kursus=kursus)
 
-    return render(request, 'main/teacher/form_materi.html', {
-        'form': form,
-        'kursus': kursus,
-        'mode': 'Tambah'
-    })
     return render(request, 'main/teacher/form_materi.html', {
         'form': form,
         'kursus': kursus,
@@ -303,16 +294,12 @@ def tambah_materi(request, kursus_id):
 def edit_materi(request, pk):
     materi = get_object_or_404(MateriKursus, pk=pk)
     kursus = materi.kursus
-    kursus = materi.kursus
 
-    # Cek kepemilikan kursus
-    if kursus.pengajar.id != request.session.get('user_id'):
     # Cek kepemilikan kursus
     if kursus.pengajar.id != request.session.get('user_id'):
         return redirect('kursus_saya_pengajar')
 
     if request.method == 'POST':
-        form = MateriForm(request.POST, request.FILES, instance=materi, kursus=kursus)
         form = MateriForm(request.POST, request.FILES, instance=materi, kursus=kursus)
         if form.is_valid():
             updated_materi = form.save(commit=False)
@@ -320,20 +307,8 @@ def edit_materi(request, pk):
                 updated_materi.file_url = materi.file_url  # file tetap jika tidak diubah
             updated_materi.save()
             return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
-            updated_materi = form.save(commit=False)
-            if not request.FILES.get('file_url'):
-                updated_materi.file_url = materi.file_url  # file tetap jika tidak diubah
-            updated_materi.save()
-            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
     else:
         form = MateriForm(instance=materi, kursus=kursus)
-        form = MateriForm(instance=materi, kursus=kursus)
-
-    return render(request, 'main/teacher/form_materi.html', {
-        'form': form,
-        'kursus': kursus,
-        'mode': 'Edit'
-    })
 
     return render(request, 'main/teacher/form_materi.html', {
         'form': form,
