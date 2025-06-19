@@ -41,6 +41,8 @@ urlpatterns = [
     path('student/mycourse/', views.mycourse, name='mycourse'),
     path('student/transaksi/', views.transaksi_peserta, name='transaksi_peserta'),
     path("certificate/", views.certificate_view, name="certificate"),
+    path('student/kursus/<int:kursus_id>/', views.detail_kursus_peserta, name='detail_kursus_peserta'),
+
 
 ]
 

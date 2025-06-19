@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'main',
     'rest_framework',
     'api',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'zapcourse',
-        'USER': 'Yeni',
-        'PASSWORD': 'zapcourse',
+        'USER': 'Cristov',
+        'PASSWORD': 'cristov123',
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -1,0 +1,41 @@
+{% extends "main/student/studentbase.html" %}
+{% load static %}
+
+{% block title %}Detail Kursus - {{ kursus.nama }}{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-10 px-4">
+  <h1 class="text-3xl font-bold mb-6">{{ kursus.nama }}</h1>
+  <p class="text-gray-300 mb-8">{{ kursus.deskripsi }}</p>
+
+  {% if not is_paid %}
+    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 p-4 rounded mb-6">
+      <p>⚠️ Kamu hanya dapat mengakses 3 materi pertama. Silakan 
+        <a href="{% url 'transaksi_peserta' %}?kursus_id={{ kursus.id }}" class="text-blue-600 underline">beli kursus</a> 
+        untuk akses penuh.
+      </p>
+    </div>
+  {% endif %}
+
+  <h2 class="text-xl font-semibold text-white mb-4">Materi Kursus</h2>
+  <ul class="space-y-4">
+    {% for materi in materi_list %}
+      <li class="bg-[#1E293B] p-4 rounded-lg shadow">
+        <h3 class="text-white font-semibold">{{ materi.urutan }}. {{ materi.judul }}</h3>
+        <p class="text-gray-400 text-sm mb-2">{{ materi.deskripsi }}</p>
+
+        {% if materi.tipe_materi == 'video' %}
+          <video controls class="w-full mt-2">
+            <source src="{{ materi.file_url.url }}" type="video/mp4">
+            Browser kamu tidak mendukung video.
+          </video>
+        {% else %}
+          <a href="{{ materi.file_url.url }}" target="_blank" class="text-blue-400 underline">
+            Download Modul
+          </a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

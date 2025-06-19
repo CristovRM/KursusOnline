@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import AdminLoginForm
-from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir
+from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir, Kategori
 from django.db.models import Sum
 from .forms import UserLoginForm
 from .forms import MateriForm
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404
 import requests
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.conf import settings
 
 
@@ -228,26 +229,37 @@ def detail_kursus_pengajar(request, kursus_id):
 # student
 def dashboard_student(request):
     if request.session.get('user_role') != 'peserta':
-        return redirect('login')  # atau login_user jika berbeda
+        return redirect('login')
 
     peserta_id = request.session.get('user_id')
     peserta_nama = request.session.get('user_nama')
 
-    # Jumlah kursus yang diikuti peserta
-    total_kursus_diikuti = Transaksi.objects.filter(user_id=peserta_id).count()
+    # Ambil ID kursus yang sudah diikuti oleh peserta
+    kursus_diikuti_ids = Transaksi.objects.filter(
+        user_id=peserta_id,
+        is_paid='yes'
+    ).values_list('kursus_id', flat=True)
 
-    # Kursus yang diikuti (limit 5 terbaru)
-    kursus_diikuti = Transaksi.objects.select_related('kursus').filter(user_id=peserta_id).order_by('-id')[:5]
+    # Total kursus diikuti
+    total_kursus_diikuti = len(kursus_diikuti_ids)
 
-    # Rata-rata rating yang diberikan oleh peserta (jika ada)
+    # Kursus yang belum diikuti (bisa di-enroll)
+    semua_kursus = Kursus.objects.exclude(id__in=kursus_diikuti_ids).select_related('kategori')
+
+    # Kategori dari semua kursus
+    semua_kategori = Kategori.objects.filter(kursus__in=semua_kursus).distinct()
+
+    # Rata-rata rating yang diberikan peserta
     rating_diberikan = Rating.objects.filter(user_id=peserta_id).aggregate(avg=Avg('rating'))['avg'] or 0
     rating_diberikan = round(rating_diberikan, 2)
 
     context = {
         'peserta_nama': peserta_nama,
         'total_kursus_diikuti': total_kursus_diikuti,
-        'kursus_diikuti': kursus_diikuti,
         'rating_diberikan': rating_diberikan,
+        'semua_kursus': semua_kursus,
+        'semua_kategori': semua_kategori,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
 
     return render(request, 'main/student/dashboard.html', context)
@@ -433,3 +445,27 @@ def certificate_view(request):
     }
 
     return render(request, 'main/student/certificate.html', context)
+
+def detail_kursus_peserta(request, kursus_id):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')
+
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+    peserta_id = request.session.get('user_id')
+
+    is_paid = Transaksi.objects.filter(
+        user_id=peserta_id,
+        kursus=kursus,
+        is_paid='yes'
+    ).exists()
+
+    if is_paid:
+        materi_list = MateriKursus.objects.filter(kursus=kursus).order_by('urutan')
+    else:
+        materi_list = MateriKursus.objects.filter(kursus=kursus, urutan__lte=3).order_by('urutan')
+
+    return render(request, 'main/student/detail_kursus_peserta.html', {
+        'kursus': kursus,
+        'materi_list': materi_list,
+        'is_paid': is_paid,
+    })

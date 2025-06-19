@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 class Member(models.Model):
     ROLE_CHOICES = [
@@ -28,15 +29,18 @@ class Kursus(models.Model):
     nama = models.CharField(max_length=255)
     deskripsi = models.TextField()
     foto = models.CharField(max_length=255)
+    harga = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     kategori = models.ForeignKey(Kategori, on_delete=models.CASCADE)
     pengajar = models.ForeignKey(Member, on_delete=models.CASCADE, limit_choices_to={'role': 'pengajar'})
+    
+    def format_harga_rupiah(self):
+        return f"Rp{intcomma(int(self.harga))},00"
 
     def __str__(self):
         return self.nama
 
 class Transaksi(models.Model):
     user = models.ForeignKey(Member, on_delete=models.CASCADE)
-    total_harga = models.DecimalField(max_digits=10, decimal_places=2)
     is_paid = models.CharField(max_length=10)
     bukti = models.CharField(max_length=255)
     subscription_start_date = models.DateField()
