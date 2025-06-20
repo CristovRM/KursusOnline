@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}ZapCourse{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-8">
+          <a href="{% url 'home' %}" class="w-15 h-15 flex items-center justify-center rounded">
+            <img src="{% static 'main/images/logo1.png' %}" alt="ZapCourse Logo" class="max-h-12 object-contain">
+          </a>
+          <div class="hidden md:flex space-x-6">
+            <a href="{% url 'course' %}" class="text-gray-300 hover:text-white">Course</a>
+            <a href="{% url 'about' %}" class="text-gray-300 hover:text-white">About</a>
+            <a href="{% url 'contact' %}" class="text-gray-300 hover:text-white">Contact</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="{% url 'login' %}" class="text-gray-300 hover:text-white">Login</a>
+          <button id="menu-btn" class="text-white md:hidden focus:outline-none">☰</button>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-2">
+      <a href="{% url 'course' %}" class="block text-gray-300 hover:text-white">Course</a>
+      <a href="{% url 'about' %}" class="block text-gray-300 hover:text-white">About</a>
+      <a href="{% url 'contact' %}" class="block text-gray-300 hover:text-white">Contact</a>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="bg-gray-800 text-gray-400 text-center py-4 mt-10">
+    &copy; 2025 ZapCourse. All rights reserved.
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    if(menuBtn) {
+      menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+    }
+  </script>
+</body>
+</html>

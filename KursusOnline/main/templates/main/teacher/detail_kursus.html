@@ -1,0 +1,71 @@
+{% extends 'main/teacherbase.html' %}
+
+{% block title %}Detail Kursus - {{ kursus.nama }}{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">{{ kursus.nama }}</h1>
+    <p class="text-gray-600 mb-10">{{ kursus.deskripsi }}</p>
+
+    <!-- Tombol Aksi -->
+<div class="mb-6 flex flex-wrap gap-2">
+  <a href="{% url 'tambah_materi' kursus.id %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    + Tambah Materi
+  </a>
+  <a href="{% url 'daftar_peserta' kursus.id %}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+    👥 Lihat Peserta
+  </a>
+  <a href="{% url 'lihat_ulasan' kursus.id %}" class="ml-2 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">
+  Lihat Ulasan
+</a>
+</div>
+
+
+    <h2 class="text-xl font-semibold mb-4">Materi & Tugas</h2>
+    <ul class="space-y-4">
+      {% for materi in materi_list %}
+        <li class="border rounded-lg p-4 flex items-start shadow-sm hover:shadow-md transition">
+          <div class="text-2xl mr-3">
+            {% if materi.tipe_materi == 'modul' %}
+              📘
+            {% else %}
+              🎥
+            {% endif %}
+          </div>
+          <div class="flex-1">
+            <p class="font-semibold">{{ materi.judul }}</p>
+            <p class="text-gray-500 text-sm">{{ materi.deskripsi }}</p>
+            <a href="{{ MEDIA_URL }}{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
+              Lihat Materi
+            </a>
+            <div class="mt-2 space-x-4">
+              <a href="{% url 'edit_materi' materi.pk %}" class="text-green-600 text-sm hover:underline">Edit</a>
+              <a href="{% url 'hapus_materi' materi.pk %}" class="text-red-600 text-sm hover:underline" onclick="return confirm('Hapus materi ini?');">
+                Hapus
+              </a>
+            </div>
+          </div>
+        </li>
+      {% empty %}
+        <li class="text-gray-400 italic">Belum ada materi ditambahkan.</li>
+      {% endfor %}
+
+      {% if tugas_akhir %}
+        <li class="border rounded-lg p-4 flex items-start bg-pink-50 shadow-sm hover:shadow-md transition">
+          <div class="text-2xl mr-3">📎</div>
+          <div>
+            <p class="font-semibold">Tugas Akhir</p>
+            <p class="text-gray-500 text-sm">Status: {{ tugas_akhir.status }}</p>
+            {% if tugas_akhir.file_url %}
+              <a href="{{ tugas_akhir.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">Lihat Tugas</a>
+            {% else %}
+              <p class="text-xs text-gray-400 italic">Belum diunggah</p>
+            {% endif %}
+          </div>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

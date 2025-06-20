@@ -1,0 +1,29 @@
+{% extends 'main/teacherbase.html' %}
+
+{% block title %}Kursus Saya - ZapCourse{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">Kursus Saya</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {% for kursus in kursus_list %}
+        <a href="{% url 'detail_kursus_pengajar' kursus.id %}" class="block">
+          <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+            <img src="{{ foto_url_prefix }}{{ kursus.foto }}" class="h-40 w-full object-cover" alt="Gambar Kursus" />
+            <div class="p-4">
+              <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-full inline-block mb-2">
+                {{ kursus.kategori.nama }}
+              </span>
+              <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ kursus.nama }}</h2>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <p class="text-gray-400">Belum ada kursus yang kamu buat.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
