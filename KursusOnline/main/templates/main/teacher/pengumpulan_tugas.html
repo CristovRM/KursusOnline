@@ -1,0 +1,29 @@
+{% extends 'main/teacherbase.html' %}
+
+{% block title %}Pengumpulan Tugas - {{ tugas.kursus.nama }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <h1 class="text-2xl font-bold mb-4">Pengumpulan Tugas Akhir</h1>
+  <p class="text-lg text-gray-300 mb-6">{{ tugas.judul }} - {{ tugas.kursus.nama }}</p>
+
+  {% if pengumpulan_list %}
+    <ul class="space-y-4">
+      {% for item in pengumpulan_list %}
+        <li class="border p-4 rounded bg-gray-800">
+          <p class="font-semibold">Peserta: {{ item.user.nama }}</p>
+          <p class="text-sm text-gray-400">Tanggal: {{ item.tanggal_dikumpulkan }}</p>
+          <p class="text-sm text-gray-400">Status: {{ item.status }}</p>
+          {% if item.file_url %}
+            <a href="{{ item.file_url.url }}" target="_blank" class="text-blue-400 hover:underline">Lihat File</a>
+          {% else %}
+            <span class="text-gray-500 italic">Belum ada file</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-gray-400 italic">Belum ada yang mengumpulkan tugas.</p>
+  {% endif %}
+</div>
+{% endblock %}

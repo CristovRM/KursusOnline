@@ -541,3 +541,20 @@ def hapus_tugas_akhir(request, pk):
     kursus_id = tugas.kursus.id
     tugas.delete()
     return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
+
+def lihat_pengumpulan_tugas(request, tugas_id):
+    if request.session.get('user_role') != 'pengajar':
+        return redirect('login_user')
+
+    tugas = get_object_or_404(TugasAkhir, pk=tugas_id)
+
+    # Validasi pengajar adalah pemilik kursus
+    if tugas.kursus.pengajar.id != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    pengumpulan_list = PengumpulanTugasAkhir.objects.filter(tugas=tugas)
+
+    return render(request, 'main/teacher/pengumpulan_tugas.html', {
+        'tugas': tugas,
+        'pengumpulan_list': pengumpulan_list
+    })
