@@ -24,7 +24,9 @@ urlpatterns = [
     path('teacher/my-course/<int:kursus_id>/ulasan/', views.lihat_ulasan, name='lihat_ulasan'),
     path('teacher/laporan/', laporan_pengajar, name='laporan_pengajar'),
     path('logout/', views.logout, name='logout'),
-
+    path('teacher/my-course/<int:kursus_id>/tugas-akhir/tambah/', views.tambah_tugas_akhir, name='tambah_tugas_akhir'),
+    path('teacher/my-course/tugas-akhir/<int:pk>/edit/', views.edit_tugas_akhir, name='edit_tugas_akhir'),
+path('teacher/my-course/tugas-akhir/<int:pk>/hapus/', views.hapus_tugas_akhir, name='hapus_tugas_akhir'),
 
 
     # Admin

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import AdminLoginForm
-from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir, Kategori
+from .models import Member, Kursus, Transaksi, PendapatanAdmin, PendapatanPengajar, Rating, MateriKursus, TugasAkhir, Kategori, PengumpulanTugasAkhir
 from django.db.models import Sum
+from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import UserLoginForm
 from .forms import MateriForm
 from django.db.models import Avg
@@ -210,18 +212,20 @@ def detail_kursus_pengajar(request, kursus_id):
     if request.session.get('user_role') != 'pengajar':
         return redirect('login_user')
 
-    kursus = Kursus.objects.get(id=kursus_id)
-    
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+
     # Validasi: hanya pengajar yang punya kursus ini yang bisa lihat
     if kursus.pengajar.id != request.session.get('user_id'):
         return redirect('kursus_saya_pengajar')
 
     materi_list = MateriKursus.objects.filter(kursus=kursus).order_by('urutan')
+    tugas_akhir_list = TugasAkhir.objects.filter(kursus=kursus).order_by('-tanggal_dibuat')
 
     context = {
         'kursus': kursus,
         'materi_list': materi_list,
-        'MEDIA_URL': settings.MEDIA_URL,  # ← tambahkan ini agar bisa dipakai di template
+        'tugas_akhir_list': tugas_akhir_list,
+        'MEDIA_URL': settings.MEDIA_URL,
     }
 
     return render(request, 'main/teacher/detail_kursus.html', context)
@@ -469,3 +473,71 @@ def detail_kursus_peserta(request, kursus_id):
         'materi_list': materi_list,
         'is_paid': is_paid,
     })
+def tambah_tugas_akhir(request, kursus_id):
+    if request.session.get('user_role') != 'pengajar':
+        return redirect('login')
+
+    kursus = get_object_or_404(Kursus, id=kursus_id, pengajar_id=request.session.get('user_id'))
+
+    if request.method == 'POST':
+        judul = request.POST.get('judul')
+        deskripsi = request.POST.get('deskripsi')
+        file = request.FILES.get('file_url')
+
+        if judul and file:
+            TugasAkhir.objects.create(
+                kursus=kursus,
+                judul=judul,
+                deskripsi=deskripsi,
+                file_url=file
+            )
+            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
+
+    return render(request, 'main/teacher/tambah_tugas_akhir.html', {
+        'kursus': kursus,
+    })
+    
+def kumpulkan_tugas(request, tugas_id):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')
+
+    tugas = get_object_or_404(TugasAkhir, id=tugas_id)
+    user_id = request.session.get('user_id')
+
+    if request.method == 'POST':
+        file_jawaban = request.FILES.get('file_url')
+        if file_jawaban:
+            PengumpulanTugasAkhir.objects.create(
+                tugas=tugas,
+                user_id=user_id,
+                file_url=file_jawaban
+            )
+            return redirect('my_course')
+
+    return render(request, 'main/student/kumpulkan_tugas.html', {
+        'tugas': tugas
+    })
+def edit_tugas_akhir(request, pk):
+    tugas = get_object_or_404(TugasAkhir, pk=pk)
+
+    if request.method == 'POST':
+        tugas.judul = request.POST.get('judul')
+        tugas.deskripsi = request.POST.get('deskripsi')
+        if request.FILES.get('file_url'):
+            tugas.file_url = request.FILES['file_url']
+        tugas.save()
+        return redirect('detail_kursus_pengajar', kursus_id=tugas.kursus.id)
+
+    # Gunakan template yang sama dengan tambah
+    return render(request, 'main/teacher/tambah_tugas_akhir.html', {
+        'kursus': tugas.kursus,
+        'tugas': tugas,  # agar bisa isi form sebelumnya
+        'edit_mode': True
+    })
+
+
+def hapus_tugas_akhir(request, pk):
+    tugas = get_object_or_404(TugasAkhir, pk=pk)
+    kursus_id = tugas.kursus.id
+    tugas.delete()
+    return redirect('detail_kursus_pengajar', kursus_id=kursus_id)

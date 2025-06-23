@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
+from datetime import date
+from django.utils import timezone
+
+
 
 class Member(models.Model):
     ROLE_CHOICES = [
@@ -92,22 +96,35 @@ class PendapatanAdmin(models.Model):
         return f"Admin - Rp{self.jumlah} (Transaksi #{self.transaksi.id})"
 
 class TugasAkhir(models.Model):
-    STATUS_CHOICES = [
-        ('belum dikumpulkan', 'Belum Dikumpulkan'),
-        ('diperiksa', 'Diperiksa'),
-        ('lulus', 'Lulus'),
-        ('tidak lulus', 'Tidak Lulus'),
-    ]
-    user = models.ForeignKey(Member, on_delete=models.CASCADE)
     kursus = models.ForeignKey(Kursus, on_delete=models.CASCADE)
-    file_url = models.CharField(max_length=255)
+    judul = models.CharField(max_length=255, default='Petunjuk Tugas Akhir')
+    deskripsi = models.TextField(blank=True)
+    file_url = models.FileField(upload_to='tugas_akhir/')
+    tanggal_dibuat = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Tugas Akhir - {self.kursus.nama}"
+    
+class PengumpulanTugasAkhir(models.Model):
+    tugas = models.ForeignKey(TugasAkhir, on_delete=models.CASCADE)
+    user = models.ForeignKey(Member, on_delete=models.CASCADE)
+    file_url = models.FileField(upload_to='jawaban_tugas/')
     catatan_pengajar = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='belum dikumpulkan')
-    tanggal_dikumpulkan = models.DateField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('belum diperiksa', 'Belum Diperiksa'),
+            ('lulus', 'Lulus'),
+            ('tidak lulus', 'Tidak Lulus')
+        ],
+        default='belum diperiksa'
+    )
+    tanggal_dikumpulkan = models.DateField(auto_now_add=True)
     tanggal_dinilai = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.nama} - {self.kursus.nama} - {self.status}"
+        return f"{self.user.nama} - {self.tugas.kursus.nama}"
+
 
 class Sertifikat(models.Model):
     user = models.ForeignKey(Member, on_delete=models.CASCADE)
