@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404
 import requests
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.conf import settings
-
+from .forms import DummyMateriForm
 
 # Create your views here.
 def home(request):
@@ -177,10 +177,18 @@ def dashboard_pengajar(request):
     pengajar_id = request.session.get('user_id')
     pengajar_nama = request.session.get('user_nama')
 
-    total_kursus = Kursus.objects.filter(pengajar_id=pengajar_id).count()
-    total_pendapatan = PendapatanPengajar.objects.filter(pengajar_id=pengajar_id).aggregate(total=Sum('jumlah'))['total'] or 0
-    rating_avg = Rating.objects.filter(kursus__pengajar_id=pengajar_id).aggregate(avg=Avg('rating'))['avg'] or 0
-    rating_avg = round(rating_avg, 2)
+    kursus_resp = requests.get(f'http://127.0.0.1:8000/api/kursus/?pengajar={pengajar_id}')
+    kursus_list = kursus_resp.json() if kursus_resp.status_code == 200 else []
+    total_kursus = len(kursus_list)
+
+    pendapatan_resp = requests.get(f'http://127.0.0.1:8000/api/pendapatan-pengajar/?pengajar={pengajar_id}')
+    pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
+    total_pendapatan = sum(float(p['jumlah']) for p in pendapatan_list)
+
+    rating_resp = requests.get(f'http://127.0.0.1:8000/api/rating/')
+    rating_list = rating_resp.json() if rating_resp.status_code == 200 else []
+    rating_filtered = [r['rating'] for r in rating_list if r['kursus'] in [k['id'] for k in kursus_list]]
+    rating_avg = round(sum(rating_filtered) / len(rating_filtered), 2) if rating_filtered else 0
 
     context = {
         'pengajar_nama': pengajar_nama,
@@ -198,7 +206,8 @@ def kursus_saya_pengajar(request):
     pengajar_id = request.session.get('user_id')
     pengajar_nama = request.session.get('user_nama')
 
-    kursus_list = Kursus.objects.filter(pengajar_id=pengajar_id).select_related('kategori')
+    response = requests.get(f'http://127.0.0.1:8000/api/kursus/?pengajar={pengajar_id}')
+    kursus_list = response.json() if response.status_code == 200 else []
 
     context = {
         'pengajar_nama': pengajar_nama,
@@ -212,23 +221,32 @@ def detail_kursus_pengajar(request, kursus_id):
     if request.session.get('user_role') != 'pengajar':
         return redirect('login_user')
 
-    kursus = get_object_or_404(Kursus, id=kursus_id)
+    # Ambil kursus dari API
+    kursus_resp = requests.get(f'http://127.0.0.1:8000/api/kursus/{kursus_id}/')
+    if kursus_resp.status_code != 200:
+        return redirect('kursus_saya_pengajar')
+    kursus = kursus_resp.json()
 
-    # Validasi: hanya pengajar yang punya kursus ini yang bisa lihat
-    if kursus.pengajar.id != request.session.get('user_id'):
+    if kursus['pengajar'] != request.session.get('user_id'):
         return redirect('kursus_saya_pengajar')
 
-    materi_list = MateriKursus.objects.filter(kursus=kursus).order_by('urutan')
-    tugas_akhir_list = TugasAkhir.objects.filter(kursus=kursus).order_by('-tanggal_dibuat')
+    # Materi via API
+    materi_resp = requests.get(f'http://127.0.0.1:8000/api/materi/?kursus={kursus_id}')
+    materi_list = materi_resp.json() if materi_resp.status_code == 200 else []
+    materi_list.sort(key=lambda x: x['urutan'])
 
-    context = {
+    # Tugas akhir via API
+    tugas_resp = requests.get(f'http://127.0.0.1:8000/api/tugas-akhir/?kursus={kursus_id}')
+    tugas_list = tugas_resp.json() if tugas_resp.status_code == 200 else []
+    tugas_list.sort(key=lambda x: x['tanggal_dibuat'], reverse=True)
+
+    return render(request, 'main/teacher/detail_kursus.html', {
         'kursus': kursus,
         'materi_list': materi_list,
-        'tugas_akhir_list': tugas_akhir_list,
+        'tugas_akhir_list': tugas_list,
         'MEDIA_URL': settings.MEDIA_URL,
-    }
+    })
 
-    return render(request, 'main/teacher/detail_kursus.html', context)
 
 # student
 def dashboard_student(request):
@@ -305,85 +323,142 @@ def transaksi_peserta(request):
         'peserta_nama': request.session.get('user_nama')
     })
 def tambah_materi(request, kursus_id):
-    kursus = get_object_or_404(Kursus, id=kursus_id)
+    pengajar_id = request.session.get('user_id')
 
-    # Cek kepemilikan kursus
-    if kursus.pengajar.id != request.session.get('user_id'):
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
         return redirect('kursus_saya_pengajar')
+    kursus = kursus_resp.json()
 
     if request.method == 'POST':
-        form = MateriForm(request.POST, request.FILES, kursus=kursus)
-        if form.is_valid():
-            materi = form.save(commit=False)
-            materi.kursus = kursus
-            materi.save()
-            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
-    else:
-        form = MateriForm(kursus=kursus)
+        payload = {
+            'judul': request.POST['judul'],
+            'deskripsi': request.POST['deskripsi'],
+            'tipe_materi': request.POST['tipe_materi'],
+            'urutan': request.POST['urutan'],
+            'kursus': kursus_id
+        }
+        files = {'file_url': request.FILES['file_url']} if request.FILES.get('file_url') else None
 
+        response = requests.post(
+            "http://127.0.0.1:8000/api/materi/",
+            data=payload,
+            files=files
+        )
+        if response.status_code in [200, 201]:
+            return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
+
+    form = DummyMateriForm()
     return render(request, 'main/teacher/form_materi.html', {
-        'form': form,
         'kursus': kursus,
-        'mode': 'Tambah'
+        'mode': 'Tambah',
+        'form': form,
     })
 
 def edit_materi(request, pk):
-    materi = get_object_or_404(MateriKursus, pk=pk)
-    kursus = materi.kursus
+    pengajar_id = request.session.get('user_id')
 
-    # Cek kepemilikan kursus
-    if kursus.pengajar.id != request.session.get('user_id'):
+    # Ambil data materi
+    materi_resp = requests.get(f'http://127.0.0.1:8000/api/materi/{pk}/')
+    if materi_resp.status_code != 200:
+        return redirect('kursus_saya_pengajar')
+    materi = materi_resp.json()
+
+    # Ambil kursus dan pastikan pemilik
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{materi['kursus']}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
         return redirect('kursus_saya_pengajar')
 
+    kursus = kursus_resp.json()
+
+    # POST: proses update data
     if request.method == 'POST':
-        form = MateriForm(request.POST, request.FILES, instance=materi, kursus=kursus)
+        form = DummyMateriForm(request.POST, request.FILES)
         if form.is_valid():
-            updated_materi = form.save(commit=False)
-            if not request.FILES.get('file_url'):
-                updated_materi.file_url = materi.file_url  # file tetap jika tidak diubah
-            updated_materi.save()
-            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
+            data = form.cleaned_data
+            payload = {
+                'judul': data['judul'],
+                'deskripsi': data['deskripsi'],
+                'tipe_materi': data['tipe_materi'],
+                'urutan': data['urutan'],
+                'kursus': kursus['id'],
+            }
+            files = {'file_url': request.FILES['file_url']} if 'file_url' in request.FILES else None
+
+            response = requests.put(
+                f"http://127.0.0.1:8000/api/materi/{pk}/", data=payload, files=files
+            )
+            if response.status_code in [200, 204]:
+                return redirect('detail_kursus_pengajar', kursus_id=kursus['id'])
     else:
-        form = MateriForm(instance=materi, kursus=kursus)
+        # GET: tampilkan form dengan data awal
+        form = DummyMateriForm(initial={
+            'judul': materi.get('judul'),
+            'deskripsi': materi.get('deskripsi'),
+            'tipe_materi': materi.get('tipe_materi'),
+            'urutan': materi.get('urutan'),
+        })
 
     return render(request, 'main/teacher/form_materi.html', {
-        'form': form,
         'kursus': kursus,
-        'mode': 'Edit'
+        'mode': 'Edit',
+        'materi': materi,
+        'form': form,
     })
 
 
 def hapus_materi(request, pk):
-    materi = get_object_or_404(MateriKursus, pk=pk)
-    kursus_id = materi.kursus.id
+    # Ambil materi dari API untuk verifikasi pemilik kursus
+    materi_resp = requests.get(f"http://127.0.0.1:8000/api/materi/{pk}/")
+    if materi_resp.status_code != 200:
+        return redirect('kursus_saya_pengajar')
+    materi = materi_resp.json()
 
-    if materi.kursus.pengajar.id == request.session.get('user_id'):
-        materi.delete()
+    kursus_id = materi['kursus']
+
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    # Hapus
+    requests.delete(f"http://127.0.0.1:8000/api/materi/{pk}/")
 
     return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
 
 def daftar_peserta(request, kursus_id):
-    kursus = get_object_or_404(Kursus, id=kursus_id)
+    pengajar_id = request.session.get('user_id')
 
-    # Pastikan pengajar kursus ini adalah yang login
-    if kursus.pengajar.id != request.session.get('user_id'):
+    # Ambil data kursus
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
         return redirect('kursus_saya_pengajar')
 
-    # Ambil semua transaksi yang berhasil dibayar untuk kursus ini
-    peserta_transaksi = Transaksi.objects.filter(kursus=kursus, is_paid='yes').select_related('user')
+    kursus = kursus_resp.json()
+
+    # Ambil semua transaksi yang sudah dibayar
+    transaksi_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
+        'kursus': kursus_id,
+        'is_paid': 'yes'
+    })
+
+    peserta_transaksi = transaksi_resp.json() if transaksi_resp.status_code == 200 else []
 
     return render(request, 'main/teacher/daftar_peserta.html', {
         'kursus': kursus,
         'peserta_transaksi': peserta_transaksi
     })
 def lihat_ulasan(request, kursus_id):
-    kursus = get_object_or_404(Kursus, id=kursus_id)
+    pengajar_id = request.session.get('user_id')
 
-    # Pastikan hanya pengajar kursus ini yang bisa melihat
-    if kursus.pengajar.id != request.session.get('user_id'):
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
         return redirect('kursus_saya_pengajar')
 
-    ulasan_list = Rating.objects.filter(kursus=kursus).select_related('user')
+    kursus = kursus_resp.json()
+
+    # Ambil ulasan berdasarkan kursus
+    ulasan_resp = requests.get('http://127.0.0.1:8000/api/rating/', params={'kursus': kursus_id})
+    ulasan_list = ulasan_resp.json() if ulasan_resp.status_code == 200 else []
 
     return render(request, 'main/teacher/ulasan_kursus.html', {
         'kursus': kursus,
@@ -391,28 +466,35 @@ def lihat_ulasan(request, kursus_id):
     })
 def laporan_pengajar(request):
     pengajar_id = request.session.get('user_id')
-    
-    # Validasi pengajar
     if not pengajar_id:
-        return redirect('login')
+        return redirect('login_user')
 
-    # Ambil semua kursus milik pengajar
-    kursus_list = Kursus.objects.filter(pengajar_id=pengajar_id)
+    kursus_resp = requests.get('http://127.0.0.1:8000/api/kursus/', params={'pengajar': pengajar_id})
+    kursus_list = kursus_resp.json() if kursus_resp.status_code == 200 else []
 
     laporan_kursus = []
     total_pendapatan = 0
     total_peserta = 0
 
     for kursus in kursus_list:
-        pendapatan = PendapatanPengajar.objects.filter(
-            pengajar_id=pengajar_id,
-            transaksi__kursus=kursus
-        ).aggregate(total=Sum('jumlah'))['total'] or 0
+        kursus_id = kursus['id']
 
-        peserta_count = Transaksi.objects.filter(
-            kursus=kursus,
-            is_paid='yes'
-        ).count()
+        # Hitung pendapatan pengajar dari API
+        pendapatan_resp = requests.get('http://127.0.0.1:8000/api/pendapatan-pengajar/', params={
+            'pengajar': pengajar_id,
+            'transaksi__kursus': kursus_id
+        })
+
+        pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
+        pendapatan = sum(item['jumlah'] for item in pendapatan_list)
+
+        # Hitung jumlah peserta yang sudah bayar
+        peserta_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
+            'kursus': kursus_id,
+            'is_paid': 'yes'
+        })
+
+        peserta_count = len(peserta_resp.json()) if peserta_resp.status_code == 200 else 0
 
         total_pendapatan += pendapatan
         total_peserta += peserta_count
@@ -428,6 +510,7 @@ def laporan_pengajar(request):
         'total_pendapatan': total_pendapatan,
         'total_peserta': total_peserta
     })
+
 def logout(request):
     request.session.flush()
     return redirect('login')
@@ -474,24 +557,24 @@ def detail_kursus_peserta(request, kursus_id):
         'is_paid': is_paid,
     })
 def tambah_tugas_akhir(request, kursus_id):
-    if request.session.get('user_role') != 'pengajar':
-        return redirect('login')
+    pengajar_id = request.session.get('user_id')
 
-    kursus = get_object_or_404(Kursus, id=kursus_id, pengajar_id=request.session.get('user_id'))
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
+        return redirect('kursus_saya_pengajar')
+    kursus = kursus_resp.json()
 
     if request.method == 'POST':
-        judul = request.POST.get('judul')
-        deskripsi = request.POST.get('deskripsi')
-        file = request.FILES.get('file_url')
+        payload = {
+            'judul': request.POST['judul'],
+            'deskripsi': request.POST['deskripsi'],
+            'kursus': kursus_id
+        }
+        files = {'file_url': request.FILES['file_url']} if request.FILES.get('file_url') else {}
 
-        if judul and file:
-            TugasAkhir.objects.create(
-                kursus=kursus,
-                judul=judul,
-                deskripsi=deskripsi,
-                file_url=file
-            )
-            return redirect('detail_kursus_pengajar', kursus_id=kursus.id)
+        response = requests.post('http://127.0.0.1:8000/api/tugas-akhir/', data=payload, files=files)
+        if response.status_code in [200, 201]:
+            return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
 
     return render(request, 'main/teacher/tambah_tugas_akhir.html', {
         'kursus': kursus,
@@ -518,43 +601,72 @@ def kumpulkan_tugas(request, tugas_id):
         'tugas': tugas
     })
 def edit_tugas_akhir(request, pk):
-    tugas = get_object_or_404(TugasAkhir, pk=pk)
+    tugas_resp = requests.get(f"http://127.0.0.1:8000/api/tugas-akhir/{pk}/")
+    if tugas_resp.status_code != 200:
+        return redirect('kursus_saya_pengajar')
+    tugas = tugas_resp.json()
+
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{tugas['kursus']}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+    kursus = kursus_resp.json()
 
     if request.method == 'POST':
-        tugas.judul = request.POST.get('judul')
-        tugas.deskripsi = request.POST.get('deskripsi')
-        if request.FILES.get('file_url'):
-            tugas.file_url = request.FILES['file_url']
-        tugas.save()
-        return redirect('detail_kursus_pengajar', kursus_id=tugas.kursus.id)
+        payload = {
+            'judul': request.POST['judul'],
+            'deskripsi': request.POST['deskripsi'],
+            'kursus': tugas['kursus']
+        }
+        files = {'file_url': request.FILES['file_url']} if request.FILES.get('file_url') else None
 
-    # Gunakan template yang sama dengan tambah
+        response = requests.put(f"http://127.0.0.1:8000/api/tugas-akhir/{pk}/", data=payload, files=files)
+        if response.status_code in [200, 204]:
+            return redirect('detail_kursus_pengajar', kursus_id=kursus['id'])
+
     return render(request, 'main/teacher/tambah_tugas_akhir.html', {
-        'kursus': tugas.kursus,
-        'tugas': tugas,  # agar bisa isi form sebelumnya
+        'kursus': kursus,
+        'tugas': tugas,
         'edit_mode': True
     })
 
 
+
 def hapus_tugas_akhir(request, pk):
-    tugas = get_object_or_404(TugasAkhir, pk=pk)
-    kursus_id = tugas.kursus.id
-    tugas.delete()
+    tugas_resp = requests.get(f"http://127.0.0.1:8000/api/tugas-akhir/{pk}/")
+    if tugas_resp.status_code != 200:
+        return redirect('kursus_saya_pengajar')
+    tugas = tugas_resp.json()
+
+    kursus_id = tugas['kursus']
+
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{kursus_id}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != request.session.get('user_id'):
+        return redirect('kursus_saya_pengajar')
+
+    requests.delete(f"http://127.0.0.1:8000/api/tugas-akhir/{pk}/")
+
     return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
 
 def lihat_pengumpulan_tugas(request, tugas_id):
-    if request.session.get('user_role') != 'pengajar':
-        return redirect('login_user')
+    pengajar_id = request.session.get('user_id')
 
-    tugas = get_object_or_404(TugasAkhir, pk=tugas_id)
-
-    # Validasi pengajar adalah pemilik kursus
-    if tugas.kursus.pengajar.id != request.session.get('user_id'):
+    tugas_resp = requests.get(f"http://127.0.0.1:8000/api/tugas-akhir/{tugas_id}/")
+    if tugas_resp.status_code != 200:
         return redirect('kursus_saya_pengajar')
 
-    pengumpulan_list = PengumpulanTugasAkhir.objects.filter(tugas=tugas)
+    tugas = tugas_resp.json()
+
+    # Verifikasi pengajar pemilik kursus
+    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{tugas['kursus']}/")
+    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
+        return redirect('kursus_saya_pengajar')
+
+    # Ambil pengumpulan tugas dari model langsung karena belum ada endpoint API
+    from .models import PengumpulanTugasAkhir
+    pengumpulan_list = PengumpulanTugasAkhir.objects.filter(tugas_id=tugas_id)
 
     return render(request, 'main/teacher/pengumpulan_tugas.html', {
         'tugas': tugas,
         'pengumpulan_list': pengumpulan_list
     })
+

@@ -62,3 +62,38 @@ class MateriForm(forms.ModelForm):
             if qs.exists():
                 raise forms.ValidationError("Sudah ada materi lain dengan urutan ini.")
         return urutan
+
+class DummyMateriForm(forms.Form):
+    judul = forms.CharField(
+        label='Judul',
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
+        })
+    )
+    deskripsi = forms.CharField(
+        label='Deskripsi',
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
+        })
+    )
+    tipe_materi = forms.ChoiceField(
+        label='Tipe Materi',
+        choices=[('modul', 'Modul'), ('video', 'Video')],
+        widget=forms.Select(attrs={
+            'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
+        })
+    )
+    urutan = forms.IntegerField(
+        label='Urutan',
+        widget=forms.NumberInput(attrs={
+            'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
+        })
+    )
+    file_url = forms.FileField(
+        label='File Materi',
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
+        })
+    )

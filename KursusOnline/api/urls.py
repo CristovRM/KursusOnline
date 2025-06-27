@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     MemberViewSet, KategoriViewSet, KursusViewSet, TransaksiViewSet,
     MateriKursusViewSet, RatingViewSet, PendapatanPengajarViewSet,
-    PendapatanAdminViewSet, TugasAkhirViewSet, SertifikatViewSet
+    PendapatanAdminViewSet, TugasAkhirViewSet, SertifikatViewSet, PengumpulanTugasAkhirViewSet
 )
 
 router = DefaultRouter()
@@ -17,6 +17,7 @@ router.register(r'pendapatan-pengajar', PendapatanPengajarViewSet)
 router.register(r'pendapatan-admin', PendapatanAdminViewSet)
 router.register(r'tugas-akhir', TugasAkhirViewSet)
 router.register(r'sertifikat', SertifikatViewSet)
+router.register(r'pengumpulantugasakhir', PengumpulanTugasAkhirViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

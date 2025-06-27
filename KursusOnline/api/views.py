@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from main.models import (
     Member, Kategori, Kursus, Transaksi, MateriKursus,
-    Rating, PendapatanPengajar, PendapatanAdmin, TugasAkhir, Sertifikat
+    Rating, PendapatanPengajar, PendapatanAdmin, TugasAkhir, Sertifikat, PengumpulanTugasAkhir
 )
 from .serializers import (
     MemberSerializer, KategoriSerializer, KursusSerializer, TransaksiSerializer,
     MateriKursusSerializer, RatingSerializer, PendapatanPengajarSerializer,
-    PendapatanAdminSerializer, TugasAkhirSerializer, SertifikatSerializer
+    PendapatanAdminSerializer, TugasAkhirSerializer, SertifikatSerializer, PengumpulanTugasAkhirSerializer
 )
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -48,3 +48,7 @@ class TugasAkhirViewSet(viewsets.ModelViewSet):
 class SertifikatViewSet(viewsets.ModelViewSet):
     queryset = Sertifikat.objects.all()
     serializer_class = SertifikatSerializer
+
+class PengumpulanTugasAkhirViewSet(viewsets.ModelViewSet):
+    queryset = PengumpulanTugasAkhir.objects.all()
+    serializer_class = PengumpulanTugasAkhirSerializer

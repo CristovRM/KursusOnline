@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from main.models import (
     Member, Kategori, Kursus, Transaksi, MateriKursus,
-    Rating, PendapatanPengajar, PendapatanAdmin, TugasAkhir, Sertifikat
+    Rating, PendapatanPengajar, PendapatanAdmin, TugasAkhir, Sertifikat, PengumpulanTugasAkhir
 )
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -70,4 +70,9 @@ class TugasAkhirSerializer(serializers.ModelSerializer):
 class SertifikatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sertifikat
+        fields = '__all__'
+
+class PengumpulanTugasAkhirSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PengumpulanTugasAkhir
         fields = '__all__'
