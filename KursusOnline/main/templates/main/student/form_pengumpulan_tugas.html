@@ -1,0 +1,47 @@
+{% extends 'main/student/studentbase.html' %}
+{% block title %}Kirim Tugas - {{ tugas.judul }}{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-xl mx-auto bg-white rounded-lg shadow p-6">
+    <h2 class="text-xl font-bold mb-4">{{ tugas.judul }}</h2>
+    <p class="text-gray-600 mb-6">{{ tugas.deskripsi }}</p>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-4 px-4 py-2 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if pengumpulan %}
+      <div class="mb-6 border p-4 rounded bg-gray-50">
+        <p class="text-sm text-gray-700 mb-1">Kamu sudah mengirim tugas:</p>
+        <a href="{{ pengumpulan.file_url.url }}" target="_blank" class="text-blue-600 hover:underline">📎 Lihat File yang Dikirim</a>
+        <p class="text-sm text-gray-500 mt-1">Status: {{ pengumpulan.status }}</p>
+        <p class="text-sm text-gray-400">Dikirim pada: {{ pengumpulan.tanggal_dikumpulkan }}</p>
+        {% if pengumpulan.tanggal_dinilai %}
+          <p class="text-sm text-gray-400">Dinilai pada: {{ pengumpulan.tanggal_dinilai }}</p>
+        {% endif %}
+        {% if pengumpulan.catatan_pengajar %}
+          <p class="text-sm text-red-500 mt-1">Catatan Pengajar: {{ pengumpulan.catatan_pengajar }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      <label class="block">
+        <span class="text-gray-700">
+          {% if pengumpulan %} Ganti File Jawaban {% else %} Upload File Jawaban {% endif %}
+        </span>
+        {{ form.file_url }}
+      </label>
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        {% if pengumpulan %} Update Jawaban {% else %} Kirim Jawaban {% endif %}
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

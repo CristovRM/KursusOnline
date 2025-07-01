@@ -45,6 +45,8 @@ urlpatterns = [
     path("certificate/", views.certificate_view, name="certificate"),
     path('student/kursus/<int:kursus_id>/', views.detail_kursus_peserta, name='detail_kursus_peserta'),
     path('student/mycourse/', views.mycourse_student, name='mycourse_student'),
+    path('peserta/kumpulkan-tugas/<int:tugas_id>/', views.kumpulkan_tugas, name='kumpulkan_tugas'),
+
 
 ]
 

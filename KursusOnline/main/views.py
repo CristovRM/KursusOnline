@@ -14,6 +14,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.conf import settings
 from .forms import DummyMateriForm
 from decimal import Decimal
+from main.forms import PengumpulanTugasAkhirForm
 
 
 # Create your views here.
@@ -547,6 +548,8 @@ def certificate_view(request):
 
     return render(request, 'main/student/certificate.html', context)
 
+from main.models import TugasAkhir  # pastikan sudah di-import
+
 def detail_kursus_peserta(request, kursus_id):
     if request.session.get('user_role') != 'peserta':
         return redirect('login')
@@ -557,7 +560,7 @@ def detail_kursus_peserta(request, kursus_id):
     is_paid = Transaksi.objects.filter(
         user_id=peserta_id,
         kursus=kursus,
-        is_paid='True'
+        is_paid=True  # True sebagai boolean, bukan string
     ).exists()
 
     if is_paid:
@@ -565,11 +568,15 @@ def detail_kursus_peserta(request, kursus_id):
     else:
         materi_list = MateriKursus.objects.filter(kursus=kursus, urutan__lte=3).order_by('urutan')
 
+    tugas_akhir_list = TugasAkhir.objects.filter(kursus=kursus)
+
     return render(request, 'main/student/detail_kursus_peserta.html', {
         'kursus': kursus,
         'materi_list': materi_list,
+        'tugas_akhir_list': tugas_akhir_list,
         'is_paid': is_paid,
     })
+
 def tambah_tugas_akhir(request, kursus_id):
     pengajar_id = request.session.get('user_id')
 
@@ -595,24 +602,30 @@ def tambah_tugas_akhir(request, kursus_id):
     })
     
 def kumpulkan_tugas(request, tugas_id):
-    if request.session.get('user_role') != 'peserta':
-        return redirect('login')
+    tugas = get_object_or_404(TugasAkhir, pk=tugas_id)
+    peserta_id = request.session.get('user_id')
+    user = get_object_or_404(Member, pk=peserta_id)
 
-    tugas = get_object_or_404(TugasAkhir, id=tugas_id)
-    user_id = request.session.get('user_id')
+    # Cek apakah sudah pernah mengumpulkan
+    existing_submission = PengumpulanTugasAkhir.objects.filter(tugas=tugas, user=user).first()
 
     if request.method == 'POST':
-        file_jawaban = request.FILES.get('file_url')
-        if file_jawaban:
-            PengumpulanTugasAkhir.objects.create(
-                tugas=tugas,
-                user_id=user_id,
-                file_url=file_jawaban
-            )
-            return redirect('my_course')
+        form = PengumpulanTugasAkhirForm(request.POST, request.FILES, instance=existing_submission)
+        if form.is_valid():
+            pengumpulan = form.save(commit=False)
+            pengumpulan.user = user
+            pengumpulan.tugas = tugas
+            pengumpulan.status = 'belum diperiksa'
+            pengumpulan.save()
+            messages.success(request, "✅ Jawaban berhasil dikirim.")
+            return redirect('kumpulkan_tugas', tugas_id=tugas.id)
+    else:
+        form = PengumpulanTugasAkhirForm(instance=existing_submission)
 
-    return render(request, 'main/student/kumpulkan_tugas.html', {
-        'tugas': tugas
+    return render(request, 'main/student/form_pengumpulan_tugas.html', {
+        'form': form,
+        'tugas': tugas,
+        'pengumpulan': existing_submission
     })
 def edit_tugas_akhir(request, pk):
     tugas_resp = requests.get(f"http://127.0.0.1:8000/api/tugas-akhir/{pk}/")

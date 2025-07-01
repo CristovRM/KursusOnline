@@ -1,7 +1,7 @@
 from django import forms
 from .models import Member
 from .models import MateriKursus
-
+from main.models import PengumpulanTugasAkhir
 
 class AdminLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
@@ -97,3 +97,7 @@ class DummyMateriForm(forms.Form):
             'class': 'w-full px-3 py-2 rounded bg-gray-700 text-white border border-gray-600'
         })
     )
+class PengumpulanTugasAkhirForm(forms.ModelForm):
+    class Meta:
+        model = PengumpulanTugasAkhir
+        fields = ['file_url']
