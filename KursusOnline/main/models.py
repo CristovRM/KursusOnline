@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import date
 from django.utils import timezone
-
+from django.shortcuts import render, redirect
 
 
 class Member(models.Model):
@@ -168,7 +168,7 @@ def laporan_pengajar(request):
         pendapatan = PendapatanPengajar.objects.filter(
             pengajar_id=pengajar_id,
             transaksi__kursus=kursus
-        ).aggregate(total=Sum('jumlah'))['total'] or 0
+        ).aggregate(total=sum('jumlah'))['total'] or 0
 
         peserta_count = Transaksi.objects.filter(
             kursus=kursus,
