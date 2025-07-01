@@ -38,11 +38,12 @@ class KursusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransaksiSerializer(serializers.ModelSerializer):
-    user = MemberSerializer(read_only=True)  # ← tambahkan ini
+    user_detail = MemberSerializer(source='user', read_only=True)
 
     class Meta:
         model = Transaksi
         fields = '__all__'
+
 
 class MateriKursusSerializer(serializers.ModelSerializer):
     class Meta:

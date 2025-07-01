@@ -21,8 +21,8 @@
             {% for transaksi in peserta_transaksi %}
               <tr class="hover:bg-gray-50">
                 <td class="px-4 py-2 border-b">{{ forloop.counter }}</td>
-                <td class="px-4 py-2 border-b">{{ transaksi.user.nama }}</td>
-                <td class="px-4 py-2 border-b">{{ transaksi.user.email }}</td>
+                <td class="px-4 py-2 border-b">{{ transaksi.user_detail.nama }}</td>
+                <td class="px-4 py-2 border-b">{{ transaksi.user_detail.email }}</td>
                 <td class="px-4 py-2 border-b">{{ transaksi.subscription_start_date }}</td>
               </tr>
             {% endfor %}
