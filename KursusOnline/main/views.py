@@ -58,12 +58,25 @@ def about(request):
 def contact(request):
     context={}
     return render(request, "main/contact.html", context)
-def mycourse(request):
-    context={}
-    return render(request, "main/student/mycourse.html", context)
-def mycourse1(request):
-    context={}
-    return render(request, "main/student/mycourse1.html", context)
+def mycourse_student(request):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')
+
+    peserta_id = request.session.get('user_id')
+
+    kursus_ids = Transaksi.objects.filter(
+        user_id=peserta_id, is_paid=True
+    ).values_list('kursus_id', flat=True)
+
+    enrolled_courses = Kursus.objects.filter(
+        id__in=kursus_ids
+    ).select_related('kategori')
+
+    context = {
+        'enrolled_courses': enrolled_courses,
+        'MEDIA_URL': settings.MEDIA_URL,
+    }
+    return render(request, 'main/student/mycourse.html', context)
 
 from django.contrib.auth.hashers import check_password
 
@@ -258,9 +271,10 @@ def dashboard_student(request):
 
     # Ambil ID kursus yang sudah diikuti oleh peserta
     kursus_diikuti_ids = Transaksi.objects.filter(
-        user_id=peserta_id,
-        is_paid='yes'
+    user_id=peserta_id,
+    is_paid=True
     ).values_list('kursus_id', flat=True)
+
 
     # Total kursus diikuti
     total_kursus_diikuti = len(kursus_diikuti_ids)
@@ -543,7 +557,7 @@ def detail_kursus_peserta(request, kursus_id):
     is_paid = Transaksi.objects.filter(
         user_id=peserta_id,
         kursus=kursus,
-        is_paid='yes'
+        is_paid='True'
     ).exists()
 
     if is_paid:

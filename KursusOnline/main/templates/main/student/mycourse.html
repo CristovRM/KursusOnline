@@ -1,26 +1,30 @@
 {% extends 'main/student/studentbase.html' %}
+{% load static %}
+{% load humanize %}
 
 {% block title %}My Courses - ZapCourse{% endblock %}
 
 {% block content %}
 <section class="max-w-7xl mx-auto px-4 mt-10">
-  <h2 class="text-2xl font-semibold text-white mb-6">My Enrolled Courses</h2>
+  <h2 class="text-2xl font-semibold text-white mb-6">Kursus yang Diikuti</h2>
 
   {% if enrolled_courses %}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {% for course in enrolled_courses %}
+      {% for kursus in enrolled_courses %}
         <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-          <img src="{{ course.image_url }}" class="w-full h-48 object-cover" alt="{{ course.title }}" />
+          <div class="w-full h-48 overflow-hidden">
+            <img src="{{ MEDIA_URL }}{{ kursus.foto }}" alt="{{ kursus.nama }}" class="w-full h-full object-cover" />
+          </div>
           <div class="p-4">
-            <h3 class="text-white font-semibold">{{ course.title }}</h3>
-            <p class="text-gray-400 text-sm">{{ course.description }}</p>
-            <p class="text-sm mt-2 text-green-400">Progress: {{ course.progress }}%</p>
+            <h3 class="text-white font-semibold text-lg">{{ kursus.nama }}</h3>
+            <p class="text-gray-400 text-sm mb-2">{{ kursus.deskripsi|truncatechars:100 }}</p>
+            <a href="{% url 'detail_kursus_peserta' kursus.id %}" class="text-sm text-blue-400 hover:underline">Lihat Detail</a>
           </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <p class="text-gray-400">You have not enrolled in any courses yet.</p>
+    <p class="text-gray-400">Anda belum mengikuti kursus apa pun.</p>
   {% endif %}
 </section>
 {% endblock %}

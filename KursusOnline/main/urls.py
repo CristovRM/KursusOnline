@@ -10,8 +10,6 @@ urlpatterns = [
     path("course", views.course, name="course"),
     path("about", views.about, name="about"),
     path("contact", views.contact, name="contact"),
-    path("my-courses", views.mycourse, name="mycourse"),
-    path("my-courses1", views.mycourse1, name="mycourse1"),
     
     # Pengajar
     path('teacher/dashboard/', views.dashboard_pengajar, name='dashboard_pengajar'),
@@ -43,11 +41,10 @@ urlpatterns = [
     
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
-    path('student/mycourse/', views.mycourse, name='mycourse'),
     path('student/transaksi/', views.transaksi_peserta, name='transaksi_peserta'),
     path("certificate/", views.certificate_view, name="certificate"),
     path('student/kursus/<int:kursus_id>/', views.detail_kursus_peserta, name='detail_kursus_peserta'),
-
+    path('student/mycourse/', views.mycourse_student, name='mycourse_student'),
 
 ]
 

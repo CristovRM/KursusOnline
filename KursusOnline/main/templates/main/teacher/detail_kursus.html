@@ -39,9 +39,13 @@
           <div class="flex-1">
             <p class="font-semibold">{{ materi.judul }}</p>
             <p class="text-gray-500 text-sm">{{ materi.deskripsi }}</p>
-            <a href="{{ MEDIA_URL }}{{ materi.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
-              Lihat Materi
-            </a>
+            {% if materi.file_url %}
+              <a href="{{ materi.file_url }}" target="_blank" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
+                📄 Lihat Materi
+              </a>
+            {% else %}
+              <p class="text-xs text-gray-400 italic">Belum ada file</p>
+            {% endif %}
             <div class="mt-2 space-x-4">
               <a href="{% url 'edit_materi' materi.id %}" class="text-green-600 text-sm hover:underline">Edit</a>
               <a href="{% url 'hapus_materi' materi.id %}" class="text-red-600 text-sm hover:underline" onclick="return confirm('Hapus materi ini?');">
@@ -65,7 +69,9 @@
             <p class="font-semibold">{{ tugas.judul }}</p>
             <p class="text-gray-500 text-sm">{{ tugas.deskripsi }}</p>
             {% if tugas.file_url %}
-              <a href="{{ MEDIA_URL }}{{ tugas.file_url }}" class="text-blue-600 text-sm hover:underline mt-1 inline-block">Lihat Tugas</a>
+              <a href="{{ tugas.file_url }}" target="_blank" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
+                📁 Lihat Tugas
+              </a>
             {% else %}
               <p class="text-xs text-gray-400 italic">Belum ada file</p>
             {% endif %}
@@ -74,7 +80,9 @@
               <a href="{% url 'hapus_tugas_akhir' tugas.id %}" class="text-red-600 text-sm hover:underline" onclick="return confirm('Hapus tugas ini?');">
                 Hapus
               </a>
-              <a href="{% url 'lihat_pengumpulan_tugas' tugas.id %}" class="text-blue-400 text-sm hover:underline">👁 Lihat Pengumpulan</a>
+              <a href="{% url 'lihat_pengumpulan_tugas' tugas.id %}" class="text-blue-400 text-sm hover:underline">
+                👁 Lihat Pengumpulan
+              </a>
             </div>
           </div>
         </li>

@@ -45,10 +45,24 @@ class Kursus(models.Model):
 
 class Transaksi(models.Model):
     user = models.ForeignKey(Member, on_delete=models.CASCADE)
-    is_paid = models.CharField(max_length=10)
-    bukti = models.CharField(max_length=255)
-    subscription_start_date = models.DateField()
+    is_paid = models.BooleanField(default=False)
+    bukti = models.ImageField(upload_to='bukti_transaksi/', null=True, blank=True)
+    subscription_start_date = models.DateField(null=True, blank=True, editable=False)
     kursus = models.ForeignKey(Kursus, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        # Ambil instance lama (jika sudah ada di DB)
+        if self.pk:
+            old = Transaksi.objects.get(pk=self.pk)
+            # Cek jika is_paid berubah dari False ke True
+            if not old.is_paid and self.is_paid:
+                self.subscription_start_date = timezone.now().date()
+        else:
+            # Jika data baru dan langsung is_paid True
+            if self.is_paid:
+                self.subscription_start_date = timezone.now().date()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Transaksi #{self.id} - {self.user.nama}"
