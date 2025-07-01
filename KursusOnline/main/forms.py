@@ -2,6 +2,7 @@ from django import forms
 from .models import Member
 from .models import MateriKursus
 from main.models import PengumpulanTugasAkhir
+from .models import Rating
 
 class AdminLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
@@ -101,3 +102,18 @@ class PengumpulanTugasAkhirForm(forms.ModelForm):
     class Meta:
         model = PengumpulanTugasAkhir
         fields = ['file_url']
+        
+class RatingForm(forms.ModelForm):
+    class Meta:
+        model = Rating
+        fields = ['rating', 'review']
+        widgets = {
+            'review': forms.Textarea(attrs={
+                'class': 'w-full bg-gray-900 text-white border border-gray-600 rounded p-2',
+                'rows': 4
+            }),
+            'rating': forms.NumberInput(attrs={
+                'class': 'bg-gray-900 text-white border border-gray-600 rounded p-2 w-20',
+                'min': 1, 'max': 5
+            })
+        }

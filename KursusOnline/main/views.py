@@ -15,7 +15,7 @@ from django.conf import settings
 from .forms import DummyMateriForm
 from decimal import Decimal
 from main.forms import PengumpulanTugasAkhirForm
-
+from .forms import RatingForm
 
 # Create your views here.
 def home(request):
@@ -560,7 +560,7 @@ def detail_kursus_peserta(request, kursus_id):
     is_paid = Transaksi.objects.filter(
         user_id=peserta_id,
         kursus=kursus,
-        is_paid=True  # True sebagai boolean, bukan string
+        is_paid=True
     ).exists()
 
     if is_paid:
@@ -569,12 +569,14 @@ def detail_kursus_peserta(request, kursus_id):
         materi_list = MateriKursus.objects.filter(kursus=kursus, urutan__lte=3).order_by('urutan')
 
     tugas_akhir_list = TugasAkhir.objects.filter(kursus=kursus)
+    ulasan_list = Rating.objects.filter(kursus=kursus).order_by('-created_at')
 
     return render(request, 'main/student/detail_kursus_peserta.html', {
         'kursus': kursus,
         'materi_list': materi_list,
         'tugas_akhir_list': tugas_akhir_list,
         'is_paid': is_paid,
+        'ulasan_list': ulasan_list,
     })
 
 def tambah_tugas_akhir(request, kursus_id):
@@ -697,3 +699,57 @@ def lihat_pengumpulan_tugas(request, tugas_id):
         'pengumpulan_list': pengumpulan_list
     })
 
+def tambah_ulasan(request, kursus_id):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')
+
+    user_id = request.session.get('user_id')
+    user = get_object_or_404(Member, pk=user_id)
+    kursus = get_object_or_404(Kursus, pk=kursus_id)
+
+    # cek apakah sudah pernah memberi ulasan
+    existing = Rating.objects.filter(user=user, kursus=kursus).first()
+    form = RatingForm(instance=existing)
+    mode = "Edit" if existing else "Tambah"
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST, instance=existing)
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.user = user
+            rating.kursus = kursus
+            rating.save()
+            messages.success(request, "✅ Ulasan berhasil disimpan.")
+            return redirect('detail_kursus_peserta', kursus_id=kursus.id)
+
+    return render(request, 'main/student/form_ulasan.html', {
+        'form': form,
+        'kursus': kursus,
+        'mode': mode,
+    })
+def edit_ulasan_peserta(request, kursus_id):
+    if request.session.get('user_role') != 'peserta':
+        return redirect('login')
+
+    kursus = get_object_or_404(Kursus, id=kursus_id)
+    user_id = request.session.get('user_id')
+    user = get_object_or_404(Member, id=user_id)
+
+    ulasan = Rating.objects.filter(kursus=kursus, user=user).first()
+    if not ulasan:
+        messages.error(request, "Ulasan tidak ditemukan.")
+        return redirect('detail_kursus_peserta', kursus_id=kursus_id)
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST, instance=ulasan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Ulasan berhasil diperbarui.")
+            return redirect('detail_kursus_peserta', kursus_id=kursus_id)
+    else:
+        form = RatingForm(instance=ulasan)
+
+    return render(request, 'main/student/form_edit_ulasan.html', {
+        'form': form,
+        'kursus': kursus
+    })

@@ -1,0 +1,26 @@
+{% extends 'main/student/studentbase.html' %}
+{% block title %}Edit Ulasan - {{ kursus.nama }}{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-xl mx-auto bg-gray-800 text-white p-6 rounded-lg shadow">
+    <h2 class="text-xl font-bold mb-4">✏️ Edit Ulasan untuk {{ kursus.nama }}</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-4 px-4 py-2 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+        💾 Simpan Perubahan
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

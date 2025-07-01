@@ -46,6 +46,8 @@ urlpatterns = [
     path('student/kursus/<int:kursus_id>/', views.detail_kursus_peserta, name='detail_kursus_peserta'),
     path('student/mycourse/', views.mycourse_student, name='mycourse_student'),
     path('peserta/kumpulkan-tugas/<int:tugas_id>/', views.kumpulkan_tugas, name='kumpulkan_tugas'),
+    path('peserta/<int:kursus_id>/ulasan/', views.tambah_ulasan, name='tambah_ulasan'),
+    path('peserta/kursus/<int:kursus_id>/edit-ulasan/', views.edit_ulasan_peserta, name='edit_ulasan_peserta'),
 
 
 ]
