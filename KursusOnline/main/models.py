@@ -3,7 +3,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from datetime import date
 from django.utils import timezone
 from django.shortcuts import render, redirect
-
+from decimal import Decimal
 
 class Member(models.Model):
     ROLE_CHOICES = [
@@ -51,21 +51,45 @@ class Transaksi(models.Model):
     kursus = models.ForeignKey(Kursus, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        # Ambil instance lama (jika sudah ada di DB)
-        if self.pk:
+        is_new = self.pk is None
+        generate_pendapatan = False
+
+        if not is_new:
             old = Transaksi.objects.get(pk=self.pk)
-            # Cek jika is_paid berubah dari False ke True
             if not old.is_paid and self.is_paid:
                 self.subscription_start_date = timezone.now().date()
+                generate_pendapatan = True
         else:
-            # Jika data baru dan langsung is_paid True
             if self.is_paid:
                 self.subscription_start_date = timezone.now().date()
+                super().save(*args, **kwargs)  # Save dulu agar pk tersedia
+                self._generate_pendapatan()
+                return
 
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"Transaksi #{self.id} - {self.user.nama}"
+        if generate_pendapatan:
+            self._generate_pendapatan()
+
+    def _generate_pendapatan(self):
+        harga = self.kursus.harga
+        tanggal = timezone.now().date()
+
+        # Jangan dobel-dobel kalau sudah ada
+        if not PendapatanPengajar.objects.filter(transaksi=self).exists():
+            PendapatanPengajar.objects.create(
+                pengajar=self.kursus.pengajar,
+                transaksi=self,
+                jumlah=harga * Decimal('0.7'),
+                tanggal=tanggal
+            )
+
+        if not PendapatanAdmin.objects.filter(transaksi=self).exists():
+            PendapatanAdmin.objects.create(
+                transaksi=self,
+                jumlah=harga * Decimal('0.3'),
+                tanggal=tanggal
+            )
 
 class MateriKursus(models.Model):
     TIPE_MATERI_CHOICES = [

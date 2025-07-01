@@ -13,6 +13,8 @@ import requests
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.conf import settings
 from .forms import DummyMateriForm
+from decimal import Decimal
+
 
 # Create your views here.
 def home(request):
@@ -498,16 +500,14 @@ def laporan_pengajar(request):
             'pengajar': pengajar_id,
             'transaksi__kursus': kursus_id
         })
-
         pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
-        pendapatan = sum(item['jumlah'] for item in pendapatan_list)
+        pendapatan = sum(Decimal(p['jumlah']) for p in pendapatan_list)
 
-        # Hitung jumlah peserta yang sudah bayar
+        # Hitung jumlah peserta
         peserta_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
             'kursus': kursus_id,
             'is_paid': 'yes'
         })
-
         peserta_count = len(peserta_resp.json()) if peserta_resp.status_code == 200 else 0
 
         total_pendapatan += pendapatan
