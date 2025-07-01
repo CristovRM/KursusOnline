@@ -121,7 +121,6 @@ def admin_dashboard(request):
         'total_kursus': total_kursus,
         'total_pendapatan_admin': total_pendapatan_admin,
         'transaksi_terbaru': transaksi_terbaru,
-        'admin_nama': request.session.get('admin_nama'),
     }
     return render(request, 'main/admin/dashboard.html', context)
 

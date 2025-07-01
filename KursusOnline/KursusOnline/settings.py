@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.templates.main.admin.context_processors.admin_nama',
             ],
         },
     },
@@ -80,8 +81,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'zapcourse',
-        'USER': 'Cristov',
-        'PASSWORD': 'cristov123',
+        'USER': 'postgres',
+        'PASSWORD': '@Hendri06',
         'HOST': 'localhost',
         'PORT': '5432',
     }
