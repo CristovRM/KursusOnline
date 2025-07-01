@@ -7,17 +7,30 @@
     <h2 class="text-2xl font-bold mb-6">Peserta Kursus: {{ kursus.nama }}</h2>
 
     {% if peserta_transaksi %}
-    <ul class="divide-y">
-      {% for transaksi in peserta_transaksi %}
-      <li class="py-3">
-        <div class="font-semibold">{{ transaksi.user.nama }}</div>
-        <div class="text-sm text-gray-600">{{ transaksi.user.email }}</div>
-        <div class="text-sm text-gray-500">Tanggal Daftar: {{ transaksi.subscription_start_date }}</div>
-      </li>
-      {% endfor %}
-    </ul>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded shadow border">
+          <thead class="bg-gray-100 text-left">
+            <tr>
+              <th class="px-4 py-2 border-b">No</th>
+              <th class="px-4 py-2 border-b">Nama</th>
+              <th class="px-4 py-2 border-b">Email</th>
+              <th class="px-4 py-2 border-b">Tanggal Daftar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for transaksi in peserta_transaksi %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2 border-b">{{ forloop.counter }}</td>
+                <td class="px-4 py-2 border-b">{{ transaksi.user.nama }}</td>
+                <td class="px-4 py-2 border-b">{{ transaksi.user.email }}</td>
+                <td class="px-4 py-2 border-b">{{ transaksi.subscription_start_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% else %}
-    <p class="text-gray-600">Belum ada peserta yang mendaftar.</p>
+      <p class="text-gray-600">Belum ada peserta yang mendaftar.</p>
     {% endif %}
 
     <a href="{% url 'detail_kursus_pengajar' kursus.id %}" class="inline-block mt-6 text-blue-600 hover:underline">← Kembali ke Kursus</a>

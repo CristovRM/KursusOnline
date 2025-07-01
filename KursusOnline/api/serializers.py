@@ -38,6 +38,8 @@ class KursusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransaksiSerializer(serializers.ModelSerializer):
+    user = MemberSerializer(read_only=True)  # ← tambahkan ini
+
     class Meta:
         model = Transaksi
         fields = '__all__'
