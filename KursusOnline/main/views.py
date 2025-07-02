@@ -83,6 +83,9 @@ def mycourse_student(request):
 
 from django.contrib.auth.hashers import check_password
 
+
+# Bagian Admin
+
 def login_admin(request):
     if request.method == 'POST':
         form = AdminLoginForm(request.POST)
@@ -184,6 +187,13 @@ def edit_user(request, id):
 def delete_user(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/members/{id}/')
     return redirect('manage_user')
+
+def transaksi(request):
+    response = requests.get('http://127.0.0.1:8000/api/transaksi/')
+    data = response.json()
+    return render(request, 'main/admin/transaksi.html', {'transaksi': data})
+
+# Bagian Pengajar
 
 def dashboard_pengajar(request):
     if request.session.get('user_role') != 'pengajar':

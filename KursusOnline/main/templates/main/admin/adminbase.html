@@ -29,7 +29,7 @@
     <p class="text-sm text-indigo-200 px-2 mb-4">Halo, {{ admin_nama }}</p>
     <ul class="space-y-2 font-medium">
       <li>
-        <a href="#" class="flex items-center p-2 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white">
+        <a href="{% url 'admin_dashboard' %}" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
           <i class="fas fa-chart-line w-5"></i>
           <span class="ml-3">Dashboard</span>
         </a>
@@ -52,13 +52,13 @@
       </li>
 
       <li>
-        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+        <a href="{% url 'manage_user' %}" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
           <i class="fas fa-users w-5"></i>
           <span class="ml-3">Kelola Pengguna</span>
         </a>
       </li>
       <li>
-        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+        <a href="{% url 'transaksi' %}" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
           <i class="fas fa-money-check-alt w-5"></i>
           <span class="ml-3">Transaksi</span>
         </a>

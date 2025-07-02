@@ -34,10 +34,13 @@ urlpatterns = [
     path('login-admin', views.login_admin, name='admin_login'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-logout/', views.logout_admin, name='logout_admin'),
+    # Admin Member
     path('manage-user/', views.manage_user, name='manage_user'),
     path('add_user/', views.add_user, name='add_user'),
     path('edit-user/<int:id>/', views.edit_user, name='edit_user'),
     path('delete-user/<int:id>/', views.delete_user, name='delete_user'),
+    #Admin Transaksi
+    path('transaksi/', views.transaksi, name='transaksi'),
     
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
