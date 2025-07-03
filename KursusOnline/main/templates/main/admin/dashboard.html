@@ -70,12 +70,12 @@
               <td class="px-6 py-4">{{ t.id }}</td>
               <td class="px-6 py-4">{{ t.user.nama }}</td>
               <td class="px-6 py-4">{{ t.kursus.nama }}</td>
-              <td class="px-6 py-4">Rp {{ t.total_harga|floatformat:0 }}</td>
+              <td class="px-6 py-4">Rp {{ t.kursus.harga|floatformat:0 }}</td>
               <td class="px-6 py-4">
-                {% if t.is_paid == "yes" %}
+                {% if t.is_paid == "true" %}
                   <span class="bg-green-100 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded">Dibayar</span>
                 {% else %}
-                  <span class="bg-red-100 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded">Belum</span>
+                  <span class="bg-red-100 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded">Belum Bayar</span>
                 {% endif %}
               </td>
             </tr>

@@ -66,11 +66,11 @@
           <thead class="text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
             <th scope="col" class="px-6 py-3">No</th>
-            <th scope="col" class="px-6 py-3">User Id</th>
-            <th scope="col" class="px-6 py-3">Kursus ID</th>
-            <th scope="col" class="px-6 py-3">Is paid</th>
+            <th scope="col" class="px-6 py-3">User</th>
+            <th scope="col" class="px-6 py-3">Kursus</th>
             <th scope="col" class="px-6 py-3">Bukti Pemabayaran</th>
             <th scope="col" class="px-6 py-3">Subscribe Date</th>
+            <th scope="col" class="px-6 py-3">Is paid</th>
             <th scope="col" class="px-6 py-3">Aksi</th>
           </tr>
           </thead>
@@ -78,16 +78,30 @@
           {% for transaksi in transaksi %}
             <tr class="bg-white border-b hover:bg-gray-50">
               <td class="px-6 py-4">{{ forloop.counter }}</td>
-              <td class="px-6 py-4">{{ transaksi.user }}</td>
-              <td class="px-6 py-4">{{ transaksi.kursus }}</td>
-              <td class="px-6 py-4">{{ transaksi.is_paid }}</td>
-              <td class="px-6 py-4">{{ transaksi.bukti }}</td>
+              <td class="px-6 py-4">{{ transaksi.user.nama }}</td>
+              <td class="px-6 py-4">{{ transaksi.kursus.nama }}</td>
+              <td class="px-6 py-4">
+                {% if transaksi.bukti %}
+                  <button onclick="showImageModal('{{MEDIA_URL}}{{ transaksi.bukti }}')">
+                    <img src="{{MEDIA_URL}}{{ transaksi.bukti }}" alt="Bukti" class="h-16 w-16 object-cover rounded shadow hover:scale-105 transition-transform">
+                  </button>
+                {% else %}
+                  <span class="text-gray-400 italic">Belum ada bukti</span>
+                {% endif %}
+              </td>
               <td class="px-6 py-4">{{ transaksi.subscription_start_date }}</td>
+              <td class="px-6 py-4">
+                {% if transaksi.is_paid %}
+                  <span class="text-green-600 text-xl font-bold">&#10004;</span> {# ✔ centang hijau #}
+                {% else %}
+                  <span class="text-red-600 text-xl font-bold">&#10008;</span> {# ✘ silang merah #}
+                {% endif %}
+              </td>
               <td class="px-6 py-4">
                 <button data-modal-target="crud-modal1-{{ transaksi.id }}" data-modal-toggle="crud-modal1-{{ transaksi.id }}" class="text-green-600 hover:underline" type="button">
                   Edit
                 </button>
-                <a href="{% url 'delete_transaksi' transaksi.id %}" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus user ini?');">Hapus</a>
+                <a href="" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus user ini?');">Hapus</a>
                </td>
             </tr>
           {% empty %}
@@ -104,6 +118,35 @@
 
 </body>
 </html>
+
+<div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70" onclick="outsideClick(event)">
+  <div class="relative bg-white rounded-lg shadow-lg max-w-lg w-full p-4" onclick="event.stopPropagation();">
+    <button onclick="closeImageModal()" class="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-xl font-bold">&times;</button>
+    <img id="modalImage" src="" alt="Bukti Transaksi" class="mx-auto max-h-[70vh] w-auto rounded shadow">
+  </div>
+</div>
+
+<script>
+  function showImageModal(imageUrl) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    modalImg.src = imageUrl;
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById("imageModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+  }
+
+  function outsideClick(event) {
+    if (event.target.id === "imageModal") {
+      closeImageModal();
+    }
+  }
+</script>
 
 <!-- Main modal Tambah Transaksi -->
 <div id="crud-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
