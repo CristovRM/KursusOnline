@@ -35,10 +35,13 @@ class KategoriSerializer(serializers.ModelSerializer):
 class KursusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kursus
-        fields = '__all__'
+        fields = ['id', 'nama', 'harga']
 
 class TransaksiSerializer(serializers.ModelSerializer):
     user_detail = MemberSerializer(source='user', read_only=True)
+    user = MemberSerializer()
+    kursus = KursusSerializer()
+
 
     class Meta:
         model = Transaksi
