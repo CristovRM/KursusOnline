@@ -16,6 +16,7 @@ from .forms import DummyMateriForm
 from decimal import Decimal
 from main.forms import PengumpulanTugasAkhirForm
 from .forms import RatingForm
+from main.models import Sertifikat
 
 # Create your views here.
 def home(request):
@@ -759,3 +760,38 @@ def edit_ulasan_peserta(request, kursus_id):
         'form': form,
         'kursus': kursus
     })
+def sertifikat_index(request):
+    peserta_id = request.session.get('user_id')
+    if not peserta_id:
+        return redirect('login')
+
+    # Ambil semua kursus yang diikuti peserta
+    transaksi_list = Transaksi.objects.filter(user_id=peserta_id, is_paid=True).select_related('kursus')
+
+    data_kursus = []
+    for transaksi in transaksi_list:
+        kursus = transaksi.kursus
+        sertifikat = Sertifikat.objects.filter(user_id=peserta_id, kursus=kursus).first()
+        data_kursus.append({
+            'kursus': kursus,
+            'sertifikat': sertifikat
+        })
+
+    return render(request, 'main/student/sertifikat_index.html', {
+        'data_kursus': data_kursus
+    })
+
+def lihat_sertifikat(request, sertifikat_id):
+    sertifikat = get_object_or_404(Sertifikat, pk=sertifikat_id)
+
+    context = {
+        "participant_name": sertifikat.user.nama,
+        "course_name": sertifikat.kursus.nama,
+        "platform_name": "ZapCourse",
+        "completion_date": sertifikat.tanggal_diterbitkan.strftime("%d %B %Y"),
+        "year": sertifikat.tanggal_diterbitkan.year,
+        "instructor_name": sertifikat.kursus.pengajar.nama,
+        "certificate_number": sertifikat.nomor_sertifikat,
+    }
+
+    return render(request, 'main/student/sertifikat_detail.html', context)

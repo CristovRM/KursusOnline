@@ -1,0 +1,35 @@
+{% extends 'main/student/studentbase.html' %}
+{% block title %}Sertifikat Saya{% endblock %}
+
+{% block content %}
+<section class="py-16 px-6 md:px-20">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8 text-white">🎓 Kursus & Sertifikat</h1>
+
+    {% if data_kursus %}
+      <ul class="space-y-6">
+        {% for item in data_kursus %}
+          <li class="bg-gray-800 text-white rounded-lg p-6 border border-gray-600 shadow">
+            <h2 class="text-xl font-semibold">{{ item.kursus.nama }}</h2>
+            <p class="text-sm text-gray-300 mb-1">Kategori: {{ item.kursus.kategori.nama }}</p>
+            <p class="text-sm text-gray-400 mb-2">Pengajar: {{ item.kursus.pengajar.nama }}</p>
+
+            {% if item.sertifikat %}
+              <p class="text-sm text-green-400 mb-2">✅ Kamu telah lulus.</p>
+              <p class="text-sm text-gray-300">Nomor Sertifikat: {{ item.sertifikat.nomor_sertifikat }}</p>
+              <p class="text-sm text-gray-400">Diterbitkan: {{ item.sertifikat.tanggal_diterbitkan|date:"d M Y" }}</p>
+              <a href="{% url 'lihat_sertifikat' item.sertifikat.id %}" target="_blank" class="inline-block mt-2 text-blue-400 hover:underline">
+                📥 Lihat Sertifikat
+            </a>
+            {% else %}
+              <p class="text-yellow-400 italic mt-2">⏳ Belum tersedia sertifikat (kamu belum lulus).</p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-400 italic">Kamu belum mengikuti kursus apapun.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

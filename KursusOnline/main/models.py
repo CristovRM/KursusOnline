@@ -4,6 +4,7 @@ from datetime import date
 from django.utils import timezone
 from django.shortcuts import render, redirect
 from decimal import Decimal
+import uuid
 
 class Member(models.Model):
     ROLE_CHOICES = [
@@ -162,6 +163,29 @@ class PengumpulanTugasAkhir(models.Model):
 
     def __str__(self):
         return f"{self.user.nama} - {self.tugas.kursus.nama}"
+
+    def save(self, *args, **kwargs):
+        creating = self.pk is None
+        old_status = None
+
+        if not creating:
+            try:
+                old_status = PengumpulanTugasAkhir.objects.get(pk=self.pk).status
+            except PengumpulanTugasAkhir.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        # Jika baru atau status berubah menjadi lulus
+        if self.status == 'lulus' and old_status != 'lulus':
+            if not Sertifikat.objects.filter(user=self.user, kursus=self.tugas.kursus).exists():
+                Sertifikat.objects.create(
+                    user=self.user,
+                    kursus=self.tugas.kursus,
+                    nomor_sertifikat=f"CERT-{uuid.uuid4().hex[:8].upper()}",
+                    tanggal_diterbitkan=timezone.now().date(),
+                    file_url='sertifikat_placeholder.pdf'  # Bisa kamu ganti jadi real file PDF
+                )
 
 
 class Sertifikat(models.Model):
