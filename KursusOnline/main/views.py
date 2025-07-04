@@ -686,22 +686,19 @@ def hapus_tugas_akhir(request, pk):
     return redirect('detail_kursus_pengajar', kursus_id=kursus_id)
 
 def lihat_pengumpulan_tugas(request, tugas_id):
-    pengajar_id = request.session.get('user_id')
+    tugas = get_object_or_404(TugasAkhir, pk=tugas_id)
+    pengumpulan_list = PengumpulanTugasAkhir.objects.filter(tugas=tugas)
 
-    tugas_resp = requests.get(f"http://127.0.0.1:8000/api/tugas-akhir/{tugas_id}/")
-    if tugas_resp.status_code != 200:
-        return redirect('kursus_saya_pengajar')
+    if request.method == 'POST':
+        pengumpulan_id = request.POST.get('pengumpulan_id')
+        pengumpulan = get_object_or_404(PengumpulanTugasAkhir, pk=pengumpulan_id)
+        pengumpulan.status = request.POST.get('status')
+        pengumpulan.catatan_pengajar = request.POST.get('catatan_pengajar')
+        pengumpulan.tanggal_dinilai = timezone.now().date()
+        pengumpulan.save()
+        messages.success(request, "✅ Penilaian berhasil diperbarui.")
 
-    tugas = tugas_resp.json()
-
-    # Verifikasi pengajar pemilik kursus
-    kursus_resp = requests.get(f"http://127.0.0.1:8000/api/kursus/{tugas['kursus']}/")
-    if kursus_resp.status_code != 200 or kursus_resp.json()['pengajar'] != pengajar_id:
-        return redirect('kursus_saya_pengajar')
-
-    # Ambil pengumpulan tugas dari model langsung karena belum ada endpoint API
-    from .models import PengumpulanTugasAkhir
-    pengumpulan_list = PengumpulanTugasAkhir.objects.filter(tugas_id=tugas_id)
+        return redirect('lihat_pengumpulan_tugas', tugas_id=tugas.id)
 
     return render(request, 'main/teacher/pengumpulan_tugas.html', {
         'tugas': tugas,

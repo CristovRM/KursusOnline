@@ -7,23 +7,77 @@
   <h1 class="text-2xl font-bold mb-4">Pengumpulan Tugas Akhir</h1>
   <p class="text-lg text-gray-300 mb-6">{{ tugas.judul }} - {{ tugas.kursus.nama }}</p>
 
+  {% if messages %}
+    {% for message in messages %}
+      <div class="mb-4 px-4 py-2 rounded text-white {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
   {% if pengumpulan_list %}
-    <ul class="space-y-4">
+    <div id="accordion-collapse" data-accordion="collapse" class="space-y-4">
       {% for item in pengumpulan_list %}
-        <li class="border p-4 rounded bg-gray-800">
-          <p class="font-semibold">Peserta: {{ item.user.nama }}</p>
-          <p class="text-sm text-gray-400">Tanggal: {{ item.tanggal_dikumpulkan }}</p>
-          <p class="text-sm text-gray-400">Status: {{ item.status }}</p>
-          {% if item.file_url %}
-            <a href="{{ item.file_url.url }}" target="_blank" class="text-blue-400 hover:underline">Lihat File</a>
-          {% else %}
-            <span class="text-gray-500 italic">Belum ada file</span>
-          {% endif %}
-        </li>
+        <div class="border rounded bg-gray-800 text-white">
+          <!-- Header -->
+          <h2>
+            <button type="button" class="flex items-center justify-between w-full px-4 py-3 text-left"
+              data-accordion-target="#accordion-item-{{ item.id }}" aria-expanded="false"
+              aria-controls="accordion-item-{{ item.id }}">
+              <span>👤 {{ item.user.nama }} - {{ item.status|capfirst }}</span>
+              <svg data-accordion-icon class="w-5 h-5 rotate-0 shrink-0 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </h2>
+
+          <!-- Body -->
+          <div id="accordion-item-{{ item.id }}" class="hidden px-4 pb-4 pt-2 border-t border-gray-700">
+            <p class="text-sm text-gray-400 mb-1">Tanggal: {{ item.tanggal_dikumpulkan }}</p>
+            {% if item.file_url %}
+              <a href="{{ item.file_url.url }}" target="_blank" class="text-blue-400 hover:underline">📄 Lihat File</a>
+            {% else %}
+              <p class="italic text-gray-500">Belum ada file</p>
+            {% endif %}
+
+            <!-- Form Penilaian -->
+            <form method="post" class="mt-4 space-y-3">
+              {% csrf_token %}
+              <input type="hidden" name="pengumpulan_id" value="{{ item.id }}">
+              <label class="block text-gray-200 text-sm">Status Penilaian</label>
+              <select name="status" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600">
+                <option value="belum diperiksa" {% if item.status == "belum diperiksa" %}selected{% endif %}>Belum Diperiksa</option>
+                <option value="lulus" {% if item.status == "lulus" %}selected{% endif %}>Lulus</option>
+                <option value="tidak lulus" {% if item.status == "tidak lulus" %}selected{% endif %}>Tidak Lulus</option>
+              </select>
+
+              <label class="block text-gray-200 text-sm">Catatan untuk Peserta</label>
+              <textarea name="catatan_pengajar" rows="3" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600">{{ item.catatan_pengajar }}</textarea>
+
+              <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                💾 Simpan Penilaian
+              </button>
+            </form>
+          </div>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
     <p class="text-gray-400 italic">Belum ada yang mengumpulkan tugas.</p>
   {% endif %}
 </div>
+
+<!-- Tambahkan ini jika kamu belum pakai flowbite -->
+<script>
+  document.querySelectorAll('[data-accordion-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.querySelector(btn.getAttribute('data-accordion-target'));
+      const icon = btn.querySelector('svg');
+      target.classList.toggle('hidden');
+      icon.classList.toggle('rotate-180');
+    });
+  });
+</script>
 {% endblock %}
