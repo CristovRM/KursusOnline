@@ -207,10 +207,25 @@ def dashboard_pengajar(request):
     kursus_list = kursus_resp.json() if kursus_resp.status_code == 200 else []
     total_kursus = len(kursus_list)
 
-    pendapatan_resp = requests.get(f'http://127.0.0.1:8000/api/pendapatan-pengajar/?pengajar={pengajar_id}')
-    pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
-    total_pendapatan = sum(float(p['jumlah']) for p in pendapatan_list)
+    # Ambil semua transaksi yang dibayar untuk semua kursus
+    total_pendapatan = 0
+    for kursus in kursus_list:
+        transaksi_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
+            'kursus': kursus['id'],
+            'is_paid': 'true'
+        })
+        transaksi_list = transaksi_resp.json() if transaksi_resp.status_code == 200 else []
 
+        for transaksi in transaksi_list:
+            pendapatan_resp = requests.get('http://127.0.0.1:8000/api/pendapatan-pengajar/', params={
+                'pengajar': pengajar_id,
+                'transaksi': transaksi['id']
+            })
+            pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
+            for p in pendapatan_list:
+                total_pendapatan += float(p['jumlah'])
+
+    # Rating rata-rata
     rating_resp = requests.get(f'http://127.0.0.1:8000/api/rating/')
     rating_list = rating_resp.json() if rating_resp.status_code == 200 else []
     rating_filtered = [r['rating'] for r in rating_list if r['kursus'] in [k['id'] for k in kursus_list]]
