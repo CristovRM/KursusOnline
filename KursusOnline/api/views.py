@@ -18,8 +18,13 @@ class KategoriViewSet(viewsets.ModelViewSet):
     serializer_class = KategoriSerializer
 
 class KursusViewSet(viewsets.ModelViewSet):
-    queryset = Kursus.objects.all()
     serializer_class = KursusSerializer
+
+    def get_queryset(self):
+        pengajar_id = self.request.query_params.get('pengajar')
+        if pengajar_id:
+            return Kursus.objects.filter(pengajar_id=pengajar_id)
+        return Kursus.objects.all()
 
 class TransaksiViewSet(viewsets.ModelViewSet):
     queryset = Transaksi.objects.all()

@@ -9,7 +9,7 @@ from .views import (
 router = DefaultRouter()
 router.register(r'members', MemberViewSet)
 router.register(r'kategori', KategoriViewSet)
-router.register(r'kursus', KursusViewSet)
+router.register('kursus', KursusViewSet, basename='kursus')
 router.register(r'transaksi', TransaksiViewSet)
 router.register(r'materi', MateriKursusViewSet)
 router.register(r'rating', RatingViewSet)
