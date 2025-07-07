@@ -194,8 +194,65 @@ def delete_user(request, id):
 def transaksi(request):
     response = requests.get('http://127.0.0.1:8000/api/transaksi/')
     data = response.json()
-    return render(request, 'main/admin/transaksi.html', {'transaksi': data})
 
+    response1 = requests.get('http://127.0.0.1:8000/api/kursus/')
+    data1 = response1.json()
+
+    response2 = requests.get('http://127.0.0.1:8000/api/members/')
+    data2 = response2.json()
+
+    return render(request, 'main/admin/transaksi.html', {'transaksi': data, 'kursus': data1, 'members': data2})
+
+def add_transaksi(request):
+    if request.method == 'POST':
+        payload = {
+            "user": request.POST['user'],
+            "kursus": request.POST['kursus'],
+            "is_paid": request.POST.get('is_paid') == 'on',
+        }
+
+        files = {'bukti': request.FILES.get('bukti')}
+
+        response = requests.post(
+            'http://127.0.0.1:8000/api/transaksi/',
+            data=payload,
+            files=files
+        )
+
+        if response.status_code in [200, 201]:
+            return redirect('transaksi')
+        else:
+            # Jika gagal, kamu bisa arahkan kembali dan beri pesan error
+            return redirect('transaksi')
+
+def edit_transaksi(request, id):
+    if request.method == 'POST':
+        payload = {
+            "user": request.POST['user'],
+            "kursus": request.POST['kursus'],
+            "is_paid": request.POST.get('is_paid') == 'on',
+        }
+
+        files = {'bukti': request.FILES.get('bukti')}
+
+        response = requests.put(
+            f'http://127.0.0.1:8000/api/transaksi/{id}/',
+            data=payload,
+            files=files
+        )
+
+        if response.status_code in [200, 204]:
+            return redirect('transaksi')
+        else:
+            print("API Error:", response.status_code, response.text)
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal mengedit Transaksi.')
+            messages.error(request, error_message)
+            return redirect('transaksi')
+
+def delete_transaksi(request, id):
+    requests.delete(f'http://127.0.0.1:8000/api/transaksi/{id}/')
+    return redirect('transaksi')
 # Bagian Pengajar
 
 def dashboard_pengajar(request):
