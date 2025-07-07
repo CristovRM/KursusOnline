@@ -47,7 +47,7 @@
         </button>
         <ul id="kursus-menu" class="hidden pl-10 mt-1 space-y-1 text-sm">
           <li><a href="#" class="hover:underline">Daftar Kursus</a></li>
-          <li><a href="#" class="hover:underline">Kelola Kategori</a></li>
+          <li><a href="{% url 'kategori' %}" class="hover:underline">Kelola Kategori</a></li>
         </ul>
       </li>
 
@@ -87,7 +87,7 @@
       </li>
 
       <li class="mt-6">
-        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-red-600 text-red-200 hover:text-white">
+        <a href="{% url 'logout_admin' %}" class="flex items-center p-2 rounded-lg hover:bg-red-600 text-red-200 hover:text-white">
           <i class="fas fa-sign-out-alt w-5"></i>
           <span class="ml-3">Logout</span>
         </a>

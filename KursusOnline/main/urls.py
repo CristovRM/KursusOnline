@@ -46,6 +46,11 @@ urlpatterns = [
     path('add_transaksi/', views.add_transaksi, name='add_transaksi'),
     path('edit-transaksi/<int:id>/', views.edit_transaksi, name='edit_transaksi'),
     path('delete-transaksi/<int:id>/', views.delete_transaksi, name='delete_transaksi'),
+    # Admin Kategori
+    path('kategori/', views.kategori, name='kategori'),
+    path('add_kategori/', views.add_kategori, name='add_kategori'),
+    path('edit-kategori/<int:id>/', views.edit_kategori, name='edit_kategori'),
+    path('delete-kategori/<int:id>/', views.delete_kategori, name='delete_kategori'),
 
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),

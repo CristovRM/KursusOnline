@@ -101,12 +101,12 @@
                 <button data-modal-target="crud-modal1-{{ transaksi.id }}" data-modal-toggle="crud-modal1-{{ transaksi.id }}" class="text-green-600 hover:underline" type="button">
                   Edit
                 </button>
-                <a href="{% url 'delete_transaksi' transaksi.id %}" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus user ini?');">Hapus</a>
+                <a href="{% url 'delete_transaksi' transaksi.id %}" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus transaksi ini?');">Hapus</a>
                </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="5" class="text-center py-6 text-gray-400">Belum ada User.</td>
+              <td colspan="5" class="text-center py-6 text-gray-400">Belum ada Transaksi.</td>
             </tr>
           </tbody>
           {% endfor %}

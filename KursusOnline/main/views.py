@@ -270,6 +270,55 @@ def edit_transaksi(request, id):
 def delete_transaksi(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/transaksi/{id}/')
     return redirect('transaksi')
+
+def kategori(request):
+    response = requests.get('http://127.0.0.1:8000/api/kategori/')
+    data = response.json()
+
+    return render(request, 'main/admin/kategori.html', {'kategori': data})
+    
+def add_kategori(request):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+        }
+        response = requests.post('http://127.0.0.1:8000/api/kategori/', data=payload)
+
+        if response.status_code in [200, 201]:
+            return redirect('kategori')
+        else:
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal menambahkan Kategori.')
+            return render(request, 'main/admin/kategori.html', {
+                'kategori': requests.get('http://127.0.0.1:8000/api/kategori/').json(),
+                'error_message': error_message
+            })
+
+def edit_kategori(request, id):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+        }
+
+        response = requests.put(f"http://127.0.0.1:8000/api/kategori/{id}/", json=payload)
+
+        if response.status_code in [200, 204]:
+            return redirect('kategori')
+        else:
+            print("API Error:", response.status_code, response.text)  # Debug
+            print("Response Content:", response.text)  # <-- print isi errornya di sini
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal mengedit Kategori.')
+            return render(request, 'main/admin/kategori.html', {
+                'kategori': requests.get('http://127.0.0.1:8000/api/kategori/').json(),
+                'error_message': error_message
+            })
+
+def delete_kategori(request, id):
+    requests.delete(f'http://127.0.0.1:8000/api/kategori/{id}/')
+    return redirect('kategori')
+
+
 # Bagian Pengajar
 
 def dashboard_pengajar(request):
