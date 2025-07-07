@@ -137,7 +137,12 @@ def logout_admin(request):
 def manage_user(request):
     response = requests.get('http://127.0.0.1:8000/api/members/')
     data = response.json()
-    return render(request, 'main/admin/manageuser.html', {'manage_user': data})
+
+    total_admin = len([u for u in data if u['role'] == 'admin'])
+    total_peserta = len([u for u in data if u['role'] == 'peserta'])
+    total_pengajar = len([u for u in data if u['role'] == 'pengajar'])
+
+    return render(request, 'main/admin/manageuser.html', {'manage_user': data, 'total_admin': total_admin, 'total_peserta': total_peserta, 'total_pengajar': total_pengajar })
     
 def add_user(request):
     if request.method == 'POST':
@@ -195,13 +200,25 @@ def transaksi(request):
     response = requests.get('http://127.0.0.1:8000/api/transaksi/')
     data = response.json()
 
+    total_transaksi = len(data)
+    belum_konfirmasi = len([
+        t for t in data
+        if not t.get('is_paid') or not t.get('bukti')
+    ])
+    selesai = len([
+        t for t in data
+        if t.get('is_paid') and t.get('bukti')
+    ])
+
     response1 = requests.get('http://127.0.0.1:8000/api/kursus/')
     data1 = response1.json()
 
     response2 = requests.get('http://127.0.0.1:8000/api/members/')
     data2 = response2.json()
 
-    return render(request, 'main/admin/transaksi.html', {'transaksi': data, 'kursus': data1, 'members': data2})
+    return render(request, 'main/admin/transaksi.html', {'transaksi': data, 'kursus': data1, 'members': data2, 'total_transaksi': total_transaksi, 'belum_konfirmasi': belum_konfirmasi, 'selesai': selesai,})
+
+    
 
 def add_transaksi(request):
     if request.method == 'POST':
