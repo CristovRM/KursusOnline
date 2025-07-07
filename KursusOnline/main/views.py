@@ -362,6 +362,37 @@ def add_kursus(request):
         else:
             # Jika gagal, kamu bisa arahkan kembali dan beri pesan error
             return redirect('kursus')
+        
+def edit_kursus(request, id):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+            "deskripsi": request.POST['deskripsi'],
+            "harga": request.POST['harga'],
+            "kategori": request.POST['kategori'],
+            "pengajar": request.POST['pengajar'],
+            
+        }
+
+        files = {}
+        foto_file = request.FILES.get('foto')
+        if foto_file:
+            files['foto'] = (foto_file.name, foto_file.file, foto_file.content_type)
+
+        response = requests.put(
+            f'http://127.0.0.1:8000/api/kursus/{id}/',
+            data=payload,
+            files=files
+        )
+
+        if response.status_code in [200, 204]:
+            return redirect('kursus')
+        else:
+            print("API Error:", response.status_code, response.text)
+            response_data = response.json() if response.content else {}
+            error_message = response_data.get('detail', 'Gagal mengedit Kursus.')
+            messages.error(request, error_message)
+            return redirect('kursus')
 
 def dashboard_pengajar(request):
     if request.session.get('user_role') != 'pengajar':

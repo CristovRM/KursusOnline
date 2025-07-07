@@ -189,17 +189,17 @@
     </div>
 </div> 
 
-{% for transaksi in transaksi %}
-<div id="crud-modal1-{{ transaksi.id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+{% for kursus in kursus %}
+<div id="crud-modal1-{{ kursus.id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
             <!-- Modal header -->
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Edit Data Transaksi
+                    Edit Data Kursus
                 </h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal1-{{ transaksi.id }}">
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal1-{{ kursus.id }}">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -207,54 +207,60 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" method="POST" enctype="multipart/form-data" action="{% url 'edit_transaksi' transaksi.id %}">
+            <form class="p-4 md:p-5" method="POST" enctype="multipart/form-data" action="{% url 'edit_kursus' kursus.id %}">
                 {% csrf_token %}
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
-                        <label for="pengajar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">pengajar</label>
-                        <select name="pengajar" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="">Pilih Peserta</option>
-                           {% for m in members %}
-                              {% if m.role == "peserta" %}
-                              <option value="{{ m.id }}" {% if m.id == transaksi.pengajar %}selected{% endif %}>
-                                {{ m.nama }}
-                              </option>
-                              {% endif %}
-                            {% endfor %}
-                        </select>
+                        <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
+                        <input type="text" name="nama" id="nama" value="{{ kursus.nama }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Nama Kursus" required="">
                     </div>
                     <div class="col-span-2">
-                        <label for="Kursus" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kursus</label>
-                        <select name="kursus" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                          <option value="">Pilih Kursus</option>
-                            {% for k in kursus %}
-                              <option value="{{ k.id }}" {% if k.id == transaksi.kursus %}selected{% endif %}>
+                        <label for="deskripsi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi</label>
+                        <input type="text" name="deskripsi" id="deskripsi" value="{{ kursus.deskripsi }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Deskripsi Kursus" required="">
+                    </div>
+                    <div class="col-span-2">
+                        <label for="foto" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Foto</label>
+                        {% if kursus.foto_url %}
+                          <p class="text-sm text-gray-600 mb-2">Foto saat ini: 
+                            <a href="{{ transaksi.foto_url }}" target="_blank" class="text-blue-500 underline">
+                              Lihat Foto
+                            </a>
+                          </p>
+                        {% endif %}
+                        <input type="file" name="foto" id="foto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Foto Transaksi">
+                    </div>
+                    <div class="col-span-2">
+                        <label for="harga" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harga</label>
+                        <input type="number" name="harga" id="harga" value="{{ kursus.harga }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Harga Kursus" required="">
+                    </div>
+                    <div class="col-span-2">
+                        <label for="kategori" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kategori</label>
+                        <select name="kategori" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          <option value="">Pilih Kategori</option>
+                            {% for k in kategori %}
+                              <option value="{{ k.id }}" {% if k.id == kursus.kategori %}selected{% endif %}>
                                 {{ k.nama }}
                               </option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-span-2">
-                       <div class="mb-3">
-                          <input type="checkbox" name="is_paid" value="on" {% if transaksi.is_paid %}checked{% endif %}>
-                          <label for="is_paid" class="ml-2 text-sm text-gray-700">Sudah Dibayar</label>
-                       </div>
-                    </div>
-                    <div class="col-span-2">
-                        <label for="bukti" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bukti</label>
-                        {% if transaksi.bukti %}
-                          <p class="text-sm text-gray-600 mb-2">Bukti saat ini: 
-                            <a href="{{ transaksi.bukti }}" target="_blank" class="text-blue-500 underline">
-                              Lihat Bukti
-                            </a>
-                          </p>
-                        {% endif %}
-                        <input type="file" name="bukti" id="bukti" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Bukti Transaksi">
+                        <label for="pengajar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pengajar</label>
+                        <select name="pengajar" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          <option value="">Pilih Pengajar</option>
+                           {% for m in members %}
+                              {% if m.role == "pengajar" %}
+                              <option value="{{ m.id }}" {% if m.id == kursus.pengajar %}selected{% endif %}>
+                                {{ m.nama }}
+                              </option>
+                              {% endif %}
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                    Edit Transaksi
+                    Edit Kursus
                 </button>
             </form>
         </div>
