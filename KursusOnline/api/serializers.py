@@ -46,7 +46,7 @@ class KursusSerializer(serializers.ModelSerializer):
     pengajar_id = serializers.PrimaryKeyRelatedField(
         queryset=Member.objects.all(), source='pengajar', write_only=True
     )
-    
+
     class Meta:
         model = Kursus
         fields = '__all__'
@@ -56,6 +56,13 @@ class KursusSerializer(serializers.ModelSerializer):
         if obj.foto:
             return f"/media/{obj.foto}"
         return None
+    
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+    
 
 class TransaksiSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())

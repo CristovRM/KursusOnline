@@ -222,12 +222,12 @@
                         <label for="foto" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Foto</label>
                         {% if kursus.foto_url %}
                           <p class="text-sm text-gray-600 mb-2">Foto saat ini: 
-                            <a href="{{ transaksi.foto_url }}" target="_blank" class="text-blue-500 underline">
+                            <a href="{{ kursus.foto_url }}" target="_blank" class="text-blue-500 underline">
                               Lihat Foto
                             </a>
                           </p>
                         {% endif %}
-                        <input type="file" name="foto" id="foto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Foto Transaksi">
+                        <input type="file" name="foto" id="foto" accept="image/*" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Foto">
                     </div>
                     <div class="col-span-2">
                         <label for="harga" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harga</label>
@@ -238,7 +238,7 @@
                         <select name="kategori" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                           <option value="">Pilih Kategori</option>
                             {% for k in kategori %}
-                              <option value="{{ k.id }}" {% if k.id == kursus.kategori %}selected{% endif %}>
+                              <option value="{{ k.id }}" {% if kursus.kategori.id == k.id %}selected{% endif %}>
                                 {{ k.nama }}
                               </option>
                             {% endfor %}
@@ -250,9 +250,9 @@
                           <option value="">Pilih Pengajar</option>
                            {% for m in members %}
                               {% if m.role == "pengajar" %}
-                              <option value="{{ m.id }}" {% if m.id == kursus.pengajar %}selected{% endif %}>
+                               <option value="{{ m.id }}" {% if kursus.pengajar.id == m.id %}selected{% endif %}>
                                 {{ m.nama }}
-                              </option>
+                               </option>
                               {% endif %}
                             {% endfor %}
                         </select>

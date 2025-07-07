@@ -339,8 +339,8 @@ def add_kursus(request):
             "nama": request.POST['nama'],
             "deskripsi": request.POST['deskripsi'],
             "harga": request.POST['harga'],
-            "kategori": request.POST['kategori'],
-            "pengajar": request.POST['pengajar'],
+            "kategori_id": request.POST['kategori'],
+            "pengajar_id": request.POST['pengajar'],
             
         }
 
@@ -369,29 +369,31 @@ def edit_kursus(request, id):
             "nama": request.POST['nama'],
             "deskripsi": request.POST['deskripsi'],
             "harga": request.POST['harga'],
-            "kategori": request.POST['kategori'],
-            "pengajar": request.POST['pengajar'],
-            
+            "kategori_id": request.POST['kategori'],
+            "pengajar_id": request.POST['pengajar'],
         }
 
         files = {}
         foto_file = request.FILES.get('foto')
+
         if foto_file:
             files['foto'] = (foto_file.name, foto_file.file, foto_file.content_type)
 
-        response = requests.put(
+        method = 'patch' if not foto_file else 'put'
+
+        api_func = getattr(requests, method)
+
+        response = api_func(
             f'http://127.0.0.1:8000/api/kursus/{id}/',
             data=payload,
-            files=files
+            files=files or None
         )
-
+        print("🛑 API Status:", response.status_code)
+        print("🛑 API Response:", response.text)
         if response.status_code in [200, 204]:
             return redirect('kursus')
         else:
             print("API Error:", response.status_code, response.text)
-            response_data = response.json() if response.content else {}
-            error_message = response_data.get('detail', 'Gagal mengedit Kursus.')
-            messages.error(request, error_message)
             return redirect('kursus')
 
 def dashboard_pengajar(request):
