@@ -18,8 +18,13 @@ class KategoriViewSet(viewsets.ModelViewSet):
     serializer_class = KategoriSerializer
 
 class KursusViewSet(viewsets.ModelViewSet):
-    queryset = Kursus.objects.all()
     serializer_class = KursusSerializer
+
+    def get_queryset(self):
+        pengajar_id = self.request.query_params.get('pengajar')
+        if pengajar_id:
+            return Kursus.objects.filter(pengajar_id=pengajar_id)
+        return Kursus.objects.all()
 
 class TransaksiViewSet(viewsets.ModelViewSet):
     queryset = Transaksi.objects.all()
@@ -34,8 +39,20 @@ class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
 
 class PendapatanPengajarViewSet(viewsets.ModelViewSet):
-    queryset = PendapatanPengajar.objects.all()
     serializer_class = PendapatanPengajarSerializer
+
+    def get_queryset(self):
+        queryset = PendapatanPengajar.objects.all()
+
+        pengajar = self.request.query_params.get('pengajar')
+        transaksi = self.request.query_params.get('transaksi')
+
+        if pengajar:
+            queryset = queryset.filter(pengajar_id=pengajar)
+        if transaksi:
+            queryset = queryset.filter(transaksi_id=transaksi)
+
+        return queryset
 
 class PendapatanAdminViewSet(viewsets.ModelViewSet):
     queryset = PendapatanAdmin.objects.all()

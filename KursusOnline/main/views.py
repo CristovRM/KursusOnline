@@ -17,6 +17,8 @@ from decimal import Decimal
 from main.forms import PengumpulanTugasAkhirForm
 from .forms import RatingForm
 from main.models import Sertifikat
+from main.forms import RegisterPesertaForm
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 def home(request):
@@ -207,10 +209,25 @@ def dashboard_pengajar(request):
     kursus_list = kursus_resp.json() if kursus_resp.status_code == 200 else []
     total_kursus = len(kursus_list)
 
-    pendapatan_resp = requests.get(f'http://127.0.0.1:8000/api/pendapatan-pengajar/?pengajar={pengajar_id}')
-    pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
-    total_pendapatan = sum(float(p['jumlah']) for p in pendapatan_list)
+    # Ambil semua transaksi yang dibayar untuk semua kursus
+    total_pendapatan = 0
+    for kursus in kursus_list:
+        transaksi_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
+            'kursus': kursus['id'],
+            'is_paid': 'true'
+        })
+        transaksi_list = transaksi_resp.json() if transaksi_resp.status_code == 200 else []
 
+        for transaksi in transaksi_list:
+            pendapatan_resp = requests.get('http://127.0.0.1:8000/api/pendapatan-pengajar/', params={
+                'pengajar': pengajar_id,
+                'transaksi': transaksi['id']
+            })
+            pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
+            for p in pendapatan_list:
+                total_pendapatan += float(p['jumlah'])
+
+    # Rating rata-rata
     rating_resp = requests.get(f'http://127.0.0.1:8000/api/rating/')
     rating_list = rating_resp.json() if rating_resp.status_code == 200 else []
     rating_filtered = [r['rating'] for r in rating_list if r['kursus'] in [k['id'] for k in kursus_list]]
@@ -795,3 +812,17 @@ def lihat_sertifikat(request, sertifikat_id):
     }
 
     return render(request, 'main/student/sertifikat_detail.html', context)
+
+
+def register_peserta(request):
+    if request.method == 'POST':
+        form = RegisterPesertaForm(request.POST)
+        if form.is_valid():
+            peserta = form.save(commit=False)
+            peserta.role = 'peserta'
+            peserta.password = make_password(form.cleaned_data['password'])  # ← hash password di sini
+            peserta.save()
+            return redirect('login')
+    else:
+        form = RegisterPesertaForm()
+    return render(request, 'main/register_peserta.html', {'form': form})
