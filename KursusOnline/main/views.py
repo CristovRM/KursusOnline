@@ -17,6 +17,8 @@ from decimal import Decimal
 from main.forms import PengumpulanTugasAkhirForm
 from .forms import RatingForm
 from main.models import Sertifikat
+from main.forms import RegisterPesertaForm
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 def home(request):
@@ -810,3 +812,17 @@ def lihat_sertifikat(request, sertifikat_id):
     }
 
     return render(request, 'main/student/sertifikat_detail.html', context)
+
+
+def register_peserta(request):
+    if request.method == 'POST':
+        form = RegisterPesertaForm(request.POST)
+        if form.is_valid():
+            peserta = form.save(commit=False)
+            peserta.role = 'peserta'
+            peserta.password = make_password(form.cleaned_data['password'])  # ← hash password di sini
+            peserta.save()
+            return redirect('login')
+    else:
+        form = RegisterPesertaForm()
+    return render(request, 'main/register_peserta.html', {'form': form})

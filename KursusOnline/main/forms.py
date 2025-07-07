@@ -3,6 +3,7 @@ from .models import Member
 from .models import MateriKursus
 from main.models import PengumpulanTugasAkhir
 from .models import Rating
+from django.core.exceptions import ValidationError
 
 class AdminLoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
@@ -117,3 +118,23 @@ class RatingForm(forms.ModelForm):
                 'min': 1, 'max': 5
             })
         }
+
+class RegisterPesertaForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'w-full px-3 py-2 text-black rounded'}))
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'w-full px-3 py-2 text-black rounded'}), label='Konfirmasi Password')
+
+    class Meta:
+        model = Member
+        fields = ['nama', 'email', 'pekerjaan', 'password']
+        widgets = {
+            'nama': forms.TextInput(attrs={'class': 'w-full px-3 py-2 text-black rounded'}),
+            'email': forms.EmailInput(attrs={'class': 'w-full px-3 py-2 text-black rounded'}),
+            'pekerjaan': forms.TextInput(attrs={'class': 'w-full px-3 py-2 text-black rounded'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm = cleaned_data.get("confirm_password")
+        if password != confirm:
+            raise ValidationError("Password dan konfirmasi tidak cocok.")

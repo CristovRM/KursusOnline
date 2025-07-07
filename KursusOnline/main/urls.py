@@ -3,6 +3,7 @@ from django.urls import path
 from .views import laporan_pengajar
 from django.conf import settings
 from django.conf.urls.static import static
+from main.views import register_peserta
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -10,6 +11,7 @@ urlpatterns = [
     path("course", views.course, name="course"),
     path("about", views.about, name="about"),
     path("contact", views.contact, name="contact"),
+    path('register/', register_peserta, name='register'),
     
     # Pengajar
     path('teacher/dashboard/', views.dashboard_pengajar, name='dashboard_pengajar'),
