@@ -33,9 +33,29 @@ class KategoriSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class KursusSerializer(serializers.ModelSerializer):
+    foto = serializers.ImageField(required=False, write_only=True)  # hanya saat input POST
+    foto_url = serializers.SerializerMethodField()  # untuk GET tampil URL
+
+    kategori = KategoriSerializer(read_only=True)
+    pengajar = MemberSerializer(read_only=True)
+
+    # Tapi saat POST/PUT kamu tetap butuh id-nya
+    kategori_id = serializers.PrimaryKeyRelatedField(
+        queryset=Kategori.objects.all(), source='kategori', write_only=True
+    )
+    pengajar_id = serializers.PrimaryKeyRelatedField(
+        queryset=Member.objects.all(), source='pengajar', write_only=True
+    )
+    
     class Meta:
         model = Kursus
         fields = '__all__'
+        extra_fields = ['foto_url']  # untuk GET
+
+    def get_foto_url(self, obj):
+        if obj.foto:
+            return f"/media/{obj.foto}"
+        return None
 
 class TransaksiSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())

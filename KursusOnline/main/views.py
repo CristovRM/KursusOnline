@@ -318,8 +318,50 @@ def delete_kategori(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/kategori/{id}/')
     return redirect('kategori')
 
+def kursus(request):
+    response = requests.get('http://127.0.0.1:8000/api/kursus/')
+    data = response.json()
 
-# Bagian Pengajar
+    total_kursus = len(data)
+
+    response1 = requests.get('http://127.0.0.1:8000/api/kategori/')
+    data1 = response1.json()
+
+    response2 = requests.get('http://127.0.0.1:8000/api/members/')
+    data2 = response2.json()
+
+    return render(request, 'main/admin/kursus.html', {'kursus': data, 'kategori': data1, 'members': data2, 'total_kursus': total_kursus})
+
+
+def add_kursus(request):
+    if request.method == 'POST':
+        payload = {
+            "nama": request.POST['nama'],
+            "deskripsi": request.POST['deskripsi'],
+            "harga": request.POST['harga'],
+            "kategori": request.POST['kategori'],
+            "pengajar": request.POST['pengajar'],
+            
+        }
+
+        files = {}
+        foto_file = request.FILES.get('foto')
+        if foto_file:
+            files['foto'] = (foto_file.name, foto_file.file, foto_file.content_type)
+
+        response = requests.post(
+            'http://127.0.0.1:8000/api/kursus/',
+            data=payload,
+            files=files
+        )
+        print("🛑 API Status:", response.status_code)
+        print("🛑 API Response:", response.text)
+
+        if response.status_code in [200, 201]:
+            return redirect('kursus')
+        else:
+            # Jika gagal, kamu bisa arahkan kembali dan beri pesan error
+            return redirect('kursus')
 
 def dashboard_pengajar(request):
     if request.session.get('user_role') != 'pengajar':

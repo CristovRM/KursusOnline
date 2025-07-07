@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 from main.models import (
     Member, Kategori, Kursus, Transaksi, MateriKursus,
     Rating, PendapatanPengajar, PendapatanAdmin, TugasAkhir, Sertifikat, PengumpulanTugasAkhir
@@ -25,6 +27,14 @@ class KursusViewSet(viewsets.ModelViewSet):
         if pengajar_id:
             return Kursus.objects.filter(pengajar_id=pengajar_id)
         return Kursus.objects.all()
+    def perform_create(self, serializer):
+        foto_file = self.request.FILES.get('foto')
+        if foto_file:
+            fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+            filename = fs.save(foto_file.name, foto_file)
+            serializer.save(foto=filename)
+        else:
+            serializer.save()
 
 class TransaksiViewSet(viewsets.ModelViewSet):
     queryset = Transaksi.objects.all()
