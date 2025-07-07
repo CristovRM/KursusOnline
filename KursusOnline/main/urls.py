@@ -41,6 +41,7 @@ urlpatterns = [
     path('delete-user/<int:id>/', views.delete_user, name='delete_user'),
     #Admin Transaksi
     path('transaksi/', views.transaksi, name='transaksi'),
+    path('add_transaksi/', views.add_transaksi, name='add_transaksi'),
     
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),

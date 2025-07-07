@@ -38,10 +38,12 @@ class KursusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TransaksiSerializer(serializers.ModelSerializer):
-    user_detail = MemberSerializer(source='user', read_only=True)
-    user = MemberSerializer()
-    kursus = KursusSerializer()
+    user = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    kursus = serializers.PrimaryKeyRelatedField(queryset=Kursus.objects.all())
 
+    
+    user_detail = MemberSerializer(source='user', read_only=True)
+    kursus_detail = KursusSerializer(source='kursus', read_only=True)
 
     class Meta:
         model = Transaksi

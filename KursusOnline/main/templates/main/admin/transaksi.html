@@ -78,8 +78,8 @@
           {% for transaksi in transaksi %}
             <tr class="bg-white border-b hover:bg-gray-50">
               <td class="px-6 py-4">{{ forloop.counter }}</td>
-              <td class="px-6 py-4">{{ transaksi.user.nama }}</td>
-              <td class="px-6 py-4">{{ transaksi.kursus.nama }}</td>
+              <td class="px-6 py-4">{{ transaksi.user_detail.nama }}</td>
+              <td class="px-6 py-4">{{ transaksi.kursus_detail.nama }}</td>
               <td class="px-6 py-4">
                 {% if transaksi.bukti %}
                   <button onclick="showImageModal('{{MEDIA_URL}}{{ transaksi.bukti }}')">
@@ -166,20 +166,35 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" method="POST" action="{% url 'add_user' %}">
+            <form class="p-4 md:p-5" method="POST" enctype="multipart/form-data" action="{% url 'add_transaksi' %}">
                 {% csrf_token %}
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
-                        <label for="user" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
-                        <input type="text" name="user" id="user" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Nama User" required="">
+                        <label for="User" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">User</label>
+                        <select name="user" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          {% for member in members %}
+                            {% if member.role == "peserta" %}
+                              <option value="">Pilih Peserta</option>
+                              <option value="{{ member.id }}">{{ member.nama }}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
                     </div>
                     <div class="col-span-2">
-                        <label for="kursus" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kursus</label>
-                        <input type="text" name="kursus" id="kursus" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Inputkan Kursus" required="">
+                        <label for="Kursus" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kursus</label>
+                        <select name="kursus" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                          {% for k in kursus %}
+                            <option value="">Pilih Peserta</option>
+                            <option value="{{ k.id }}">{{ k.nama }}</option>
+                          {% endfor %}
+                        </select>
                     </div>
                     <div class="col-span-2">
-                        <label for="is_paid" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Is Paid</label>
-                        <input type="checkbox" name="is_paid" id="is_paid" required="">
+                       <input type="hidden" name="is_paid" value="false">
+                       <div class="mb-3">
+                          <input type="checkbox" name="is_paid" value="on" id="is_paid" class="form-checkbox text-blue-600">
+                          <label for="is_paid" class="ml-2 text-sm text-gray-700">Sudah Dibayar</label>
+                       </div>
                     </div>
                     <div class="col-span-2">
                         <label for="bukti" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Bukti</label>
