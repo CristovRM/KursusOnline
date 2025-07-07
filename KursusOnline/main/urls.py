@@ -54,6 +54,7 @@ urlpatterns = [
     # Admin Kursus
     path('kursus/', views.kursus, name='kursus'),
     path('add_kursus/', views.add_kursus, name='add_kursus'),
+    path('edit-kursus/<int:id>/', views.edit_kursus, name='edit_kursus'),
 
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
