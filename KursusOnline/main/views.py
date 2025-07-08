@@ -223,45 +223,26 @@ def transaksi(request):
 
     return render(request, 'main/admin/transaksi.html', {'transaksi': data, 'kursus': data1, 'members': data2, 'total_transaksi': total_transaksi, 'belum_konfirmasi': belum_konfirmasi, 'selesai': selesai,})
 
-    
-
-def add_transaksi(request):
-    if request.method == 'POST':
-        payload = {
-            "user": request.POST['user'],
-            "kursus": request.POST['kursus'],
-            "is_paid": request.POST.get('is_paid') == 'on',
-        }
-
-        files = {'bukti': request.FILES.get('bukti')}
-
-        response = requests.post(
-            'http://127.0.0.1:8000/api/transaksi/',
-            data=payload,
-            files=files
-        )
-
-        if response.status_code in [200, 201]:
-            return redirect('transaksi')
-        else:
-            # Jika gagal, kamu bisa arahkan kembali dan beri pesan error
-            return redirect('transaksi')
-
 def edit_transaksi(request, id):
     if request.method == 'POST':
+        # Ambil data transaksi lama dari API
+        transaksi_url = f'http://127.0.0.1:8000/api/transaksi/{id}/'
+        get_response = requests.get(transaksi_url)
+        if get_response.status_code != 200:
+            messages.error(request, 'Transaksi tidak ditemukan.')
+            return redirect('transaksi')
+
+        transaksi_data = get_response.json()
+
+        # Siapkan payload hanya untuk update is_paid (user & kursus tetap sama)
         payload = {
-            "user": request.POST['user'],
-            "kursus": request.POST['kursus'],
+            "user": transaksi_data['user'],         # tetap gunakan ID user lama
+            "kursus": transaksi_data['kursus'],     # tetap gunakan ID kursus lama
             "is_paid": request.POST.get('is_paid') == 'on',
         }
 
-        files = {'bukti': request.FILES.get('bukti')}
-
-        response = requests.put(
-            f'http://127.0.0.1:8000/api/transaksi/{id}/',
-            data=payload,
-            files=files
-        )
+        # Kirim PUT request tanpa mengirim file baru
+        response = requests.put(transaksi_url, data=payload)
 
         if response.status_code in [200, 204]:
             return redirect('transaksi')
@@ -271,6 +252,7 @@ def edit_transaksi(request, id):
             error_message = response_data.get('detail', 'Gagal mengedit Transaksi.')
             messages.error(request, error_message)
             return redirect('transaksi')
+
 
 def delete_transaksi(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/transaksi/{id}/')
