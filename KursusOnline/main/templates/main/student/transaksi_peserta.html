@@ -10,41 +10,61 @@
       Isi formulir di bawah untuk menyelesaikan pembelian kursus.
     </p>
 
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div class="p-3 rounded text-sm
+            {% if message.tags == 'success' %}bg-green-600{% elif message.tags == 'error' %}bg-red-600{% else %}bg-gray-600{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
 
+      <!-- Menampilkan Nama (readonly) -->
       <div class="mb-4">
-        <label class="block text-sm mb-1" for="nama">Nama Lengkap</label>
-        <input type="text" id="nama" name="nama" placeholder="Masukkan Nama Lengkap"
-               class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <label class="block text-sm mb-1">Nama Lengkap</label>
+        <div class="px-4 py-2 rounded-md bg-gray-700 text-white">{{ user.nama }}</div>
       </div>
 
+      <!-- Menampilkan Email (readonly) -->
       <div class="mb-4">
-        <label class="block text-sm mb-1" for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="contoh@email.com"
-               class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <label class="block text-sm mb-1">Email</label>
+        <div class="px-4 py-2 rounded-md bg-gray-700 text-white">{{ user.email }}</div>
       </div>
 
+      <!-- Telepon -->
       <div class="mb-4">
         <label class="block text-sm mb-1" for="telepon">Nomor Telepon</label>
         <input type="text" id="telepon" name="telepon" placeholder="cth: 081234567890"
                class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
       </div>
 
+      <!-- Metode Pembayaran -->
       <div class="mb-4">
         <label class="block text-sm mb-1" for="metode">Metode Pembayaran</label>
-        <select id="metode" name="metode"
+        <select id="metode" name="metode" onchange="tampilkanPetunjuk()"
                 class="w-full px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
           <option value="">Pilih Metode</option>
           <option value="transfer">Transfer Bank</option>
           <option value="ewallet">E-Wallet</option>
-          <option value="cod">COD</option>
         </select>
       </div>
 
+      <!-- Petunjuk Metode Pembayaran -->
+      <div id="petunjukBox" class="mb-4 hidden">
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-md text-sm">
+          <span id="petunjukText">Silakan pilih metode pembayaran terlebih dahulu.</span>
+        </div>
+      </div>
+
+      <!-- Bukti -->
       <div class="mb-6">
-        <label class="block text-sm mb-1" for="bukti">Unggah Bukti Pembayaran (Opsional)</label>
-        <input type="file" id="bukti" name="bukti"
+        <label class="block text-sm mb-1" for="bukti">Unggah Bukti Pembayaran <span class="text-red-500">*</span></label>
+        <input type="file" id="bukti" name="bukti" required
                class="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
 
@@ -55,4 +75,27 @@
     </form>
   </div>
 </div>
+
+<script>
+  function tampilkanPetunjuk() {
+    const metode = document.getElementById("metode").value;
+    const box = document.getElementById("petunjukBox");
+    const textEl = document.getElementById("petunjukText");
+
+    let text = "";
+
+    if (metode === "transfer") {
+      text = "Silakan transfer ke rekening BCA 1234567890 a.n. ZapCourse Academy.";
+    } else if (metode === "ewallet") {
+      text = "Kirim ke OVO/Gopay/Dana: 081234567890 (a.n. ZapCourse).";
+    }
+
+    if (text) {
+      textEl.innerText = text;
+      box.classList.remove("hidden");
+    } else {
+      box.classList.add("hidden");
+    }
+  }
+</script>
 {% endblock %}

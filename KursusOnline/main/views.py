@@ -531,38 +531,72 @@ def transaksi_peserta(request):
     if request.session.get('user_role') != 'peserta':
         return redirect('login')
 
+    user_id = request.session.get('user_id')
+    kursus_id = request.GET.get('kursus_id')  # dari URL
+
+    if not user_id or not kursus_id:
+        messages.error(request, "Permintaan tidak valid.")
+        return redirect('peserta_dashboard')
+
+    # Ambil data user
+    try:
+        user = Member.objects.get(id=user_id)
+    except Member.DoesNotExist:
+        messages.error(request, "User tidak ditemukan.")
+        return redirect('peserta_dashboard')
+
+    # Ambil data kursus
+    try:
+        kursus = Kursus.objects.get(id=kursus_id)
+    except Kursus.DoesNotExist:
+        messages.error(request, "Kursus tidak ditemukan.")
+        return redirect('peserta_dashboard')
+
     if request.method == 'POST':
-        nama = request.POST.get('nama')
-        email = request.POST.get('email')
         telepon = request.POST.get('telepon')
         metode = request.POST.get('metode')
-        bukti = request.FILES.get('bukti')  # Optional
-        
-        peserta_id = request.session.get('user_id')
-        kursus_id = request.GET.get('kursus_id')  # Asumsikan id kursus dikirim via URL
+        bukti = request.FILES.get('bukti')
+
+        if not bukti:
+            messages.error(request, "Bukti pembayaran wajib diunggah.")
+            return redirect(request.path)
+
+        # Simpan file bukti ke storage sementara
+        bukti_path = default_storage.save(f'bukti_transaksi/{bukti.name}', bukti)
+        bukti_file = open(default_storage.path(bukti_path), 'rb')
+
+        payload = {
+            'user': str(user.id),
+            'kursus': str(kursus.id),
+            'is_paid': 'false',  # tetap false, admin yang akan menyetujui
+        }
+
+        files = {
+            'bukti': bukti_file
+        }
 
         try:
-            kursus = Kursus.objects.get(id=kursus_id)
-        except Kursus.DoesNotExist:
-            return render(request, 'main/student/transaksi_peserta.html', {
-                'error': 'Kursus tidak ditemukan.'
-            })
+            response = requests.post(
+                f"{settings.API_URL}/transaksi/",
+                data=payload,
+                files=files
+            )
+        finally:
+            bukti_file.close()
 
-        transaksi = Transaksi.objects.create(
-            user_id=peserta_id,
-            kursus=kursus,
-            total_harga=kursus.harga,
-            subscription_start_date=timezone.now(),
-            is_paid=False,  # default belum lunas
-            bukti=bukti,
-        )
+        if response.status_code in [200, 201]:
+            messages.success(request, "Transaksi berhasil dikirim. Menunggu persetujuan admin.")
+            return redirect('peserta_dashboard')
+        else:
+            print("API Error:", response.status_code, response.text)
+            messages.error(request, "Gagal mengirim transaksi.")
+            return redirect(request.path)
 
-        return redirect('transaksi_berhasil')  # ganti dengan nama url yang sesuai
-
-    # Untuk metode GET, hanya tampilkan form pembelian
     return render(request, 'main/student/transaksi_peserta.html', {
-        'peserta_nama': request.session.get('user_nama')
+        'user': user,
+        'kursus': kursus,
     })
+    
 def tambah_materi(request, kursus_id):
     pengajar_id = request.session.get('user_id')
 
