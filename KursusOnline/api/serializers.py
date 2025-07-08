@@ -58,10 +58,26 @@ class KursusSerializer(serializers.ModelSerializer):
         return None
     
     def update(self, instance, validated_data):
+        foto = validated_data.pop('foto', None)
+
+        if foto:
+            import time, os
+            from django.conf import settings
+
+            nama_file = f"{int(time.time())}_{foto.name.replace(' ', '_')}"
+            path = os.path.join(settings.MEDIA_ROOT, nama_file)
+
+            with open(path, 'wb+') as dest:
+                for chunk in foto.chunks():
+                    dest.write(chunk)
+
+            instance.foto = nama_file
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
         instance.save()
-        return instance
+        return instance 
     
 
 class TransaksiSerializer(serializers.ModelSerializer):

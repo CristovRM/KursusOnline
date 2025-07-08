@@ -74,7 +74,7 @@
                 <button data-modal-target="crud-modal1-{{ kursus.id }}" data-modal-toggle="crud-modal1-{{ kursus.id }}" class="text-green-600 hover:underline" type="button">
                   Edit
                 </button>
-                <a href="" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus Kursus ini?');">Hapus</a>
+                <a href="{% url 'delete_kursus' kursus.id %}" class="text-red-600 hover:underline" onclick="return confirm('Yakin ingin hapus Kursus ini?');">Hapus</a>
                </td>
             </tr>
           {% empty %}

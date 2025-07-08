@@ -19,6 +19,11 @@ from .forms import RatingForm
 from main.models import Sertifikat
 from main.forms import RegisterPesertaForm
 from django.contrib.auth.hashers import make_password
+from django.core.files.storage import default_storage
+import requests
+import time
+import os
+
 
 # Create your views here.
 def home(request):
@@ -365,6 +370,13 @@ def add_kursus(request):
         
 def edit_kursus(request, id):
     if request.method == 'POST':
+        print("== MULAI EDIT KURSUS ==")
+        print("POST:", request.POST)
+        print("FILES:", request.FILES)
+
+        foto_file = request.FILES.get('foto')
+
+        # Payload umum
         payload = {
             "nama": request.POST['nama'],
             "deskripsi": request.POST['deskripsi'],
@@ -373,29 +385,34 @@ def edit_kursus(request, id):
             "pengajar_id": request.POST['pengajar'],
         }
 
-        files = {}
-        foto_file = request.FILES.get('foto')
+        files = None
+        method = requests.patch
 
         if foto_file:
-            files['foto'] = (foto_file.name, foto_file.file, foto_file.content_type)
+            files = {
+                'foto': (foto_file.name, foto_file.file, foto_file.content_type)
+            }
+            print("📦 File disiapkan untuk dikirim ke API:", files)
 
-        method = 'patch' if not foto_file else 'put'
+        try:
+            response = method(
+                f'http://127.0.0.1:8000/api/kursus/{id}/',
+                data=payload,
+                files=files
+            )
+            print("📡 API Status:", response.status_code)
+            print("📡 API Response:", response.text)
+        except Exception as e:
+            print("❌ Gagal koneksi API:", e)
 
-        api_func = getattr(requests, method)
+        return redirect('kursus')
+    
+def delete_kursus(request, id):
+    requests.delete(f'http://127.0.0.1:8000/api/kursus/{id}/')
+    return redirect('kursus')
 
-        response = api_func(
-            f'http://127.0.0.1:8000/api/kursus/{id}/',
-            data=payload,
-            files=files or None
-        )
-        print("🛑 API Status:", response.status_code)
-        print("🛑 API Response:", response.text)
-        if response.status_code in [200, 204]:
-            return redirect('kursus')
-        else:
-            print("API Error:", response.status_code, response.text)
-            return redirect('kursus')
 
+# Pengajar
 def dashboard_pengajar(request):
     if request.session.get('user_role') != 'pengajar':
         return redirect('login_user')

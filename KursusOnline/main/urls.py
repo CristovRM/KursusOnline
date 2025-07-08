@@ -55,7 +55,7 @@ urlpatterns = [
     path('kursus/', views.kursus, name='kursus'),
     path('add_kursus/', views.add_kursus, name='add_kursus'),
     path('edit-kursus/<int:id>/', views.edit_kursus, name='edit_kursus'),
-
+    path('delete-kursus/<int:id>/', views.delete_kursus, name='delete_kursus'),
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
     path('student/transaksi/', views.transaksi_peserta, name='transaksi_peserta'),
