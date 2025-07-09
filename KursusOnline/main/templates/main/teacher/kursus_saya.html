@@ -11,7 +11,7 @@
       {% for kursus in kursus_list %}
         <a href="{% url 'detail_kursus_pengajar' kursus.id %}" class="block">
           <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
-            <img src="{{ foto_url_prefix }}{{ kursus.foto }}" class="h-40 w-full object-cover" alt="Gambar Kursus" />
+            <img src="{{ kursus.foto_url }}" class="h-40 w-full object-cover" alt="Gambar Kursus" />
             <div class="p-4">
               <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-full inline-block mb-2">
                 {{ kursus.kategori.nama }}

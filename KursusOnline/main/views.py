@@ -306,19 +306,36 @@ def delete_kategori(request, id):
     return redirect('kategori')
 
 def kursus(request):
+    # Ambil semua data kursus
     response = requests.get('http://127.0.0.1:8000/api/kursus/')
-    data = response.json()
+    kursus_data = response.json() if response.status_code == 200 else []
+    total_kursus = len(kursus_data)
 
-    total_kursus = len(data)
+    # Ambil semua data kategori dan member
+    kategori_response = requests.get('http://127.0.0.1:8000/api/kategori/')
+    kategori_data = kategori_response.json() if kategori_response.status_code == 200 else []
 
-    response1 = requests.get('http://127.0.0.1:8000/api/kategori/')
-    data1 = response1.json()
+    member_response = requests.get('http://127.0.0.1:8000/api/members/')
+    member_data = member_response.json() if member_response.status_code == 200 else []
 
-    response2 = requests.get('http://127.0.0.1:8000/api/members/')
-    data2 = response2.json()
+    # Buat map (dict) untuk akses cepat berdasarkan ID
+    kategori_map = {k['id']: k for k in kategori_data}
+    member_map = {m['id']: m for m in member_data}
 
-    return render(request, 'main/admin/kursus.html', {'kursus': data, 'kategori': data1, 'members': data2, 'total_kursus': total_kursus})
+    # Tambahkan data kategori dan pengajar ke masing-masing kursus
+    for kursus in kursus_data:
+        kategori_id = kursus.get('kategori')
+        pengajar_id = kursus.get('pengajar')
 
+        kursus['kategori'] = kategori_map.get(kategori_id, {})
+        kursus['pengajar'] = member_map.get(pengajar_id, {})
+
+    return render(request, 'main/admin/kursus.html', {
+        'kursus': kursus_data,
+        'kategori': kategori_data,
+        'members': member_data,
+        'total_kursus': total_kursus
+    })
 
 def add_kursus(request):
     if request.method == 'POST':
@@ -326,8 +343,8 @@ def add_kursus(request):
             "nama": request.POST['nama'],
             "deskripsi": request.POST['deskripsi'],
             "harga": request.POST['harga'],
-            "kategori_id": request.POST['kategori'],
-            "pengajar_id": request.POST['pengajar'],
+            "kategori": request.POST['kategori'],
+            "pengajar": request.POST['pengajar'],
             
         }
 
@@ -363,8 +380,8 @@ def edit_kursus(request, id):
             "nama": request.POST['nama'],
             "deskripsi": request.POST['deskripsi'],
             "harga": request.POST['harga'],
-            "kategori_id": request.POST['kategori'],
-            "pengajar_id": request.POST['pengajar'],
+            "kategori": request.POST['kategori'],
+            "pengajar": request.POST['pengajar'],
         }
 
         files = None

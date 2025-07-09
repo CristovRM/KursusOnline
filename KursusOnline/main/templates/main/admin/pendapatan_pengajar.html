@@ -36,7 +36,7 @@
               <td class="px-6 py-4">{{ pendapatan_pengajar.jumlah }}</td>
               <td class="px-6 py-4">{{ pendapatan_pengajar.tanggal }}</td>
               <td class="px-6 py-4">{{ pendapatan_pengajar.pengajar.nama }}</td>
-              <td class="px-6 py-4">{{ <pendapatan_pengajar class="transaksi nama kursus_detail nama"></pendapatan_pengajar> }}</td>
+              <td class="px-6 py-4">{{ pendapatan_pengajar.transaksi.kursus_detail.nama }}</td>
             </tr>
           {% empty %}
             <tr>
