@@ -55,6 +55,12 @@ urlpatterns = [
     path('add_kursus/', views.add_kursus, name='add_kursus'),
     path('edit-kursus/<int:id>/', views.edit_kursus, name='edit_kursus'),
     path('delete-kursus/<int:id>/', views.delete_kursus, name='delete_kursus'),
+    # Admin Feedback
+    path('feedback/', views.feedback, name='feedback'),
+    # Admin Pendapatan
+    path('pendapatan_admin/', views.pendapatan_admin, name='pendapatan_admin'),
+    path('pendapatan_pengajar/', views.pendapatan_pengajar, name='pendapatan_pengajar'),
+
     # Student
     path('student/dashboard', views.dashboard_student, name='peserta_dashboard'),
     path('student/transaksi/', views.transaksi_peserta, name='transaksi_peserta'),

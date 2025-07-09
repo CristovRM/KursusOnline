@@ -64,7 +64,7 @@
         </a>
       </li>
       <li>
-        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
+        <a href="{% url 'feedback' %}" class="flex items-center p-2 rounded-lg hover:bg-indigo-700 text-white">
           <i class="fas fa-star w-5"></i>
           <span class="ml-3">Feedback Kursus</span>
         </a>
@@ -81,8 +81,8 @@
           </svg>
         </button>
         <ul id="pendapatan-menu" class="hidden pl-10 mt-1 space-y-1 text-sm">
-          <li><a href="#" class="hover:underline">Pendapatan Admin</a></li>
-          <li><a href="#" class="hover:underline">Pendapatan Pengajar</a></li>
+          <li><a href="{% url 'pendapatan_admin' %}" class="hover:underline">Pendapatan Admin</a></li>
+          <li><a href="{% url 'pendapatan_pengajar' %}" class="hover:underline">Pendapatan Pengajar</a></li>
         </ul>
       </li>
 

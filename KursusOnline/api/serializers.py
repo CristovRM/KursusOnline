@@ -99,16 +99,23 @@ class MateriKursusSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RatingSerializer(serializers.ModelSerializer):
+    user = MemberSerializer(read_only=True)
+    kursus = KursusSerializer(read_only=True)
+
     class Meta:
         model = Rating
         fields = '__all__'
 
 class PendapatanPengajarSerializer(serializers.ModelSerializer):
+    pengajar = MemberSerializer(read_only=True)
+    transaksi = TransaksiSerializer(read_only=True)
     class Meta:
         model = PendapatanPengajar
         fields = '__all__'
 
 class PendapatanAdminSerializer(serializers.ModelSerializer):
+    transaksi = TransaksiSerializer(read_only=True)
+
     class Meta:
         model = PendapatanAdmin
         fields = '__all__'

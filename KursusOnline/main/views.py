@@ -393,6 +393,26 @@ def delete_kursus(request, id):
     requests.delete(f'http://127.0.0.1:8000/api/kursus/{id}/')
     return redirect('kursus')
 
+def feedback(request):
+    response = requests.get('http://127.0.0.1:8000/api/rating/')
+    data = response.json()
+
+    return render(request, 'main/admin/feedback.html', {'feedback': data})
+
+def pendapatan_admin(request):
+    response = requests.get('http://127.0.0.1:8000/api/pendapatan-admin/')
+    data = response.json()
+
+    return render(request, 'main/admin/pendapatan_admin.html', {'pendapatan_admin': data})
+
+def pendapatan_pengajar(request):
+    response = requests.get('http://127.0.0.1:8000/api/pendapatan-pengajar/')
+    data = response.json()
+
+    return render(request, 'main/admin/pendapatan_pengajar.html', {'pendapatan_pengajar': data})
+
+
+
 
 # Pengajar
 def dashboard_pengajar(request):
