@@ -791,19 +791,25 @@ def laporan_pengajar(request):
     for kursus in kursus_list:
         kursus_id = kursus['id']
 
-        # Hitung pendapatan pengajar dari API
-        pendapatan_resp = requests.get('http://127.0.0.1:8000/api/pendapatan-pengajar/', params={
-            'pengajar': pengajar_id,
-            'transaksi__kursus': kursus_id
-        })
+        # Ambil pendapatan hanya dari transaksi yang sudah dibayar
+        pendapatan_resp = requests.get(
+            'http://127.0.0.1:8000/api/pendapatan-pengajar/',
+            params={
+                'pengajar': pengajar_id,
+                'transaksi__kursus': kursus_id
+            }
+        )
         pendapatan_list = pendapatan_resp.json() if pendapatan_resp.status_code == 200 else []
         pendapatan = sum(Decimal(p['jumlah']) for p in pendapatan_list)
 
-        # Hitung jumlah peserta
-        peserta_resp = requests.get('http://127.0.0.1:8000/api/transaksi/', params={
-            'kursus': kursus_id,
-            'is_paid': 'yes'
-        })
+        # Ambil jumlah peserta (hanya transaksi yang sudah dibayar)
+        peserta_resp = requests.get(
+            'http://127.0.0.1:8000/api/transaksi/',
+            params={
+                'kursus': kursus_id,
+                'is_paid': 'true'
+            }
+        )
         peserta_count = len(peserta_resp.json()) if peserta_resp.status_code == 200 else 0
 
         total_pendapatan += pendapatan
