@@ -17,8 +17,8 @@ def log_to_file(fitur, status, keterangan=""):
 try:
     # === LOGIN SEBAGAI PENGAJAR ===
     driver.get("http://127.0.0.1:8000/login")
-    driver.find_element(By.NAME, 'email').send_keys('romi@gmail.com')
-    driver.find_element(By.NAME, 'password').send_keys('romi123')
+    driver.find_element(By.NAME, 'email').send_keys('pascol@gmail.com')
+    driver.find_element(By.NAME, 'password').send_keys('test123')
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
     time.sleep(3)
 
@@ -28,7 +28,7 @@ try:
         log_to_file("Login Pengajar", "Gagal", f"Redirect ke: {driver.current_url}")
 
     # === MASUK KE SALAH SATU KURSUS ===
-    driver.get("http://127.0.0.1:8000/teacher/my-course/10/")
+    driver.get("http://127.0.0.1:8000/teacher/my-course/13/")
     time.sleep(2)
     if "Materi" in driver.page_source:
         log_to_file("Masuk Kursus", "Berhasil")
@@ -51,7 +51,7 @@ try:
             option.click()
             break
 
-    driver.find_element(By.NAME, 'urutan').send_keys('2')
+    driver.find_element(By.NAME, 'urutan').send_keys('5')
 
     # Upload file
     file_path = os.path.abspath("modul_dummy.pdf")  # Pastikan file ini ada

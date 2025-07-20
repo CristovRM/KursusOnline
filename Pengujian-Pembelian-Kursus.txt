@@ -1,2 +1,209 @@
 Login - 2025-07-20 20:12:00 - Status: Berhasil - 
 Pembelian Kursus - 2025-07-20 20:12:04 - Status: Berhasil - Tampil alert sukses & redirect ke dashboard
+Login - 2025-07-21 00:40:32 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:40:39 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:41:02 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:41:10 - Status: Gagal - Alert tidak muncul - Error: Message: target frame detached
+  (failed to check if window was closed: disconnected: unable to send message to renderer)
+  (Session info: chrome=138.0.7204.158)
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9b0c]
+	(No symbol) [0x0x7ff6be2b727b]
+	(No symbol) [0x0x7ff6be2b613e]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:41:42 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:41:47 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Pembelian Kursus - 2025-07-21 00:42:04 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:46:27 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:46:38 - Status: Gagal - Alert tidak muncul - Error: Message: 
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be3206aa]
+	(No symbol) [0x0x7ff6be32095c]
+	(No symbol) [0x0x7ff6be373d07]
+	(No symbol) [0x0x7ff6be34890f]
+	(No symbol) [0x0x7ff6be370b07]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:49:14 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:49:17 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:51:32 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:51:34 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+
+Login - 2025-07-21 00:53:06 - Status: Gagal - Redirect: http://127.0.0.1:8000/login#
+Pembelian Kursus - 2025-07-21 00:53:07 - Status: Gagal - Alert tidak muncul - Error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=138.0.7204.158); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	GetHandleVerifier [0x0x7ff6be50e925+77845]
+	GetHandleVerifier [0x0x7ff6be50e980+77936]
+	(No symbol) [0x0x7ff6be2c9cda]
+	(No symbol) [0x0x7ff6be2b5f35]
+	(No symbol) [0x0x7ff6be2daabe]
+	(No symbol) [0x0x7ff6be34feb5]
+	(No symbol) [0x0x7ff6be370432]
+	(No symbol) [0x0x7ff6be3486a3]
+	(No symbol) [0x0x7ff6be311791]
+	(No symbol) [0x0x7ff6be312523]
+	GetHandleVerifier [0x0x7ff6be7e683d+3059501]
+	GetHandleVerifier [0x0x7ff6be7e0bfd+3035885]
+	GetHandleVerifier [0x0x7ff6be8003f0+3164896]
+	GetHandleVerifier [0x0x7ff6be528c2e+185118]
+	GetHandleVerifier [0x0x7ff6be53053f+216111]
+	GetHandleVerifier [0x0x7ff6be5172d4+113092]
+	GetHandleVerifier [0x0x7ff6be517489+113529]
+	GetHandleVerifier [0x0x7ff6be4fe288+10616]
+	BaseThreadInitThunk [0x0x7ffe60877374+20]
+	RtlUserThreadStart [0x0x7ffe61dfcc91+33]
+

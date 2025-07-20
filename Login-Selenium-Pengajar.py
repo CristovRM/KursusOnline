@@ -16,9 +16,9 @@ def log_to_file(fitur, status):
 try:
     driver.get('http://127.0.0.1:8000/login')
 
-    driver.find_element(By.NAME, 'email').send_keys('romi@gmail.com')
+    driver.find_element(By.NAME, 'email').send_keys('pascol@gmail.com')
     time.sleep(2)
-    driver.find_element(By.NAME, 'password').send_keys('romi123')
+    driver.find_element(By.NAME, 'password').send_keys('test123')
     time.sleep(2)
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
 
