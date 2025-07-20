@@ -18,7 +18,7 @@ def log_to_file(fitur, status, keterangan=""):
 try:
     # === LOGIN ===
     driver.get("http://127.0.0.1:8000/login")
-    driver.find_element(By.NAME, 'email').send_keys('tes1752322628@mail.com')
+    driver.find_element(By.NAME, 'email').send_keys('tes1753015815@gmail.com')
     driver.find_element(By.NAME, 'password').send_keys('tes12345')
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
     time.sleep(2)
@@ -29,7 +29,7 @@ try:
         log_to_file("Login", "Gagal", f"Redirect: {driver.current_url}")
 
     # === PILIH KURSUS ===
-    driver.get("http://127.0.0.1:8000/student/kursus/10")  # ID kursus sesuaikan
+    driver.get("http://127.0.0.1:8000/student/kursus/9/")  # ID kursus sesuaikan
     beli_kursus_link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "beli kursus")))
     beli_kursus_link.click()
 
@@ -39,7 +39,7 @@ try:
     metode.select_by_index(1)  # index 1 = opsi pertama selain 'Pilih Metode'
 
     # === UNGGAH FILE ===
-    bukti_path = os.path.abspath("tugas_akhir_dummy.pdf")  # Pastikan file ada di folder yang sama
+    bukti_path = os.path.abspath("bukti_pembayaran_dummy.jpg")  # Pastikan file ada di folder yang sama
     driver.find_element(By.NAME, 'bukti').send_keys(bukti_path)
 
     driver.find_element(By.XPATH, '//button[contains(text(),"Beli Kursus")]').click()

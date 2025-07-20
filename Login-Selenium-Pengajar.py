@@ -57,3 +57,5 @@ try:
 except Exception as e:
     log_to_file("Logout", f"Error: {str(e)}")
 
+driver.quit()
+
