@@ -1,5 +1,6 @@
 {% extends 'main/homebase.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Courses - ZapCourse{% endblock %}
 
@@ -9,10 +10,9 @@
   <div class="flex justify-center">
     <select id="categoryFilter" class="text-gray-700 px-4 py-2 rounded-md border border-gray-300 w-full max-w-sm">
       <option value="All">All Categories</option>
-      <option value="Web Development">Web Development</option>
-      <option value="Mobile Development">Mobile Development</option>
-      <option value="Data Science">Data Science</option>
-      <option value="Cyber Security">Cyber Security</option>
+      {% for kategori in semua_kategori %}
+        <option value="{{ kategori.nama }}">{{ kategori.nama }}</option>
+      {% endfor %}
     </select>
   </div>
 </section>
@@ -20,81 +20,20 @@
 <!-- Courses -->
 <section class="max-w-7xl mx-auto px-4 mt-10">
   <div id="courseContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    <!-- Web Development -->
-    <div class="course-card" data-category="Web Development">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/fullstack.webp' %}" alt="Fullstack Laravel" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">Fullstack Laravel & React</h3>
-          <p class="text-gray-400 text-sm">Laravel, Inertia, React, MySQL</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="course-card" data-category="Web Development">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/nextjs.jpg' %}" alt="Next.js Portfolio Website" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">Next.js Portfolio Website</h3>
-          <p class="text-gray-400 text-sm">Next.js, Tailwind, Markdown</p>
+    {% for kursus in semua_kursus %}
+      <div class="course-card" data-category="{{ kursus.kategori.nama }}">
+        <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
+          <div class="w-full aspect-[16/9] overflow-hidden">
+            <img src="{{ MEDIA_URL }}{{ kursus.foto }}" alt="{{ kursus.nama }}" class="w-full h-full object-cover" />
+          </div>
+          <div class="p-4">
+            <h3 class="text-white font-semibold">{{ kursus.nama }}</h3>
+            <p class="text-gray-400 text-sm">{{ kursus.deskripsi|truncatechars:100 }}</p>
+            <p class="text-blue-400 text-sm mt-1 font-semibold">{{ kursus.format_harga_rupiah }}</p>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Mobile Development -->
-    <div class="course-card" data-category="Mobile Development">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/reactnative.png' %}" alt="React Native Mobile App" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">React Native Mobile App</h3>
-          <p class="text-gray-400 text-sm">React Native, TS, Expo</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="course-card" data-category="Mobile Development">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/fingerprint.jpg' %}" alt="Android Fingerprint Auth" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">Android Fingerprint Auth</h3>
-          <p class="text-gray-400 text-sm">Kotlin, Biometric API</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Data Science -->
-    <div class="course-card" data-category="Data Science">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/dataanalis.jpg' %}" alt="Data Analysis with Pandas" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">Data Analysis with Pandas</h3>
-          <p class="text-gray-400 text-sm">Python, Pandas, Jupyter</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cyber Security -->
-    <div class="course-card" data-category="Cyber Security">
-      <div class="bg-[#1E293B] rounded-lg overflow-hidden shadow-lg">
-        <div class="w-full aspect-[16/9] overflow-hidden">
-        <img src="{% static 'main/images/cyber.webp' %}" alt="Cybersecurity Fundamentals" class="w-full h-full object-cover"  />
-        </div>
-        <div class="p-4">
-          <h3 class="text-white font-semibold">Cybersecurity Fundamentals</h3>
-          <p class="text-gray-400 text-sm">Kali Linux, Wireshark</p>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
   </div>
 </section>
 

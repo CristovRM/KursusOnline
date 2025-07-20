@@ -24,7 +24,10 @@
       {% endfor %}
     </div>
   {% else %}
-    <p class="text-gray-400">Anda belum mengikuti kursus apa pun.</p>
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded shadow-sm">
+      <p class="font-semibold">Tidak ada kursus aktif.</p>
+      <p class="text-sm mt-1">Pastikan Anda telah menyelesaikan Tugas Akhir dalam 2 bulan sejak pembayaran, atau silakan mendaftar ulang.</p>
+    </div>
   {% endif %}
 </section>
 {% endblock %}

@@ -23,7 +23,7 @@ from django.core.files.storage import default_storage
 import requests
 import time
 import os
-
+from datetime import timedelta
 
 # Create your views here.
 def home(request):
@@ -61,7 +61,14 @@ def login(request):
 
     return render(request, 'main/login.html', {'form': form})
 def course(request):
-    context={}
+    semua_kursus = Kursus.objects.select_related('kategori').all()
+    semua_kategori = Kategori.objects.all()
+
+    context = {
+        'semua_kursus': semua_kursus,
+        'semua_kategori': semua_kategori,
+        'MEDIA_URL': settings.MEDIA_URL
+    }
     return render(request, "main/course.html", context)
 def about(request):
     context={}
@@ -1100,3 +1107,21 @@ def register_peserta(request):
     else:
         form = RegisterPesertaForm()
     return render(request, 'main/register_peserta.html', {'form': form})
+
+def is_course_accessible(transaksi):
+    if not transaksi.is_paid or not transaksi.subscription_start_date:
+        return False
+
+    batas_akses = transaksi.subscription_start_date + timedelta(days=60)
+
+    # Cek apakah sudah lulus
+    pengumpulan = PengumpulanTugasAkhir.objects.filter(
+        tugas__kursus=transaksi.kursus,
+        user=transaksi.user
+    ).order_by('-tanggal_dikumpulkan').first()
+
+    if pengumpulan and pengumpulan.status == 'lulus':
+        return True  # akses permanen jika lulus
+
+    # Jika belum lulus, cek apakah masih dalam 2 bulan
+    return timezone.now().date() <= batas_akses
