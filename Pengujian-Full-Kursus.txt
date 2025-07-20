@@ -1,0 +1,8 @@
+Login - 2025-07-20 20:00:40 - Status: Berhasil - 
+Dashboard - 2025-07-20 20:00:42 - Status: Berhasil - 
+MyCourse - 2025-07-20 20:00:48 - Status: Berhasil - Daftar kursus muncul
+Lihat Kursus - 2025-07-20 20:00:53 - Status: Berhasil - 
+Lihat Materi - 2025-07-20 20:00:59 - Status: Berhasil - PDF dibuka: http://127.0.0.1:8000/media/materi_files/Praktikum10_Hendri_3312311033_sZPHE9c.pdf
+Lihat Tugas - 2025-07-20 20:01:10 - Status: Berhasil - PDF dibuka: http://127.0.0.1:8000/media/tugas_akhir/modul_ta_dummy_e0OyN1l.pdf
+Kumpulkan Tugas Akhir - 2025-07-20 20:01:26 - Status: Berhasil - Tugas berhasil dikirim
+Lihat File yang Dikirim - 2025-07-20 20:01:32 - Status: Berhasil - PDF dibuka: http://127.0.0.1:8000/media/jawaban_tugas/tugas_akhir_dummy_3yVcJPP.pdf
