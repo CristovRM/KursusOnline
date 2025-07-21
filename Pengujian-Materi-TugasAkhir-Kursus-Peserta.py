@@ -17,7 +17,7 @@ def log_to_file(fitur, status, keterangan=""):
 try:
     # === LOGIN PESERTA ===
     driver.get("http://127.0.0.1:8000/login")
-    driver.find_element(By.NAME, 'email').send_keys('tes1752322628@mail.com')
+    driver.find_element(By.NAME, 'email').send_keys('tes1753031227@gmail.com')
     driver.find_element(By.NAME, 'password').send_keys('tes12345')
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
     time.sleep(3)  # delay setelah login
@@ -47,7 +47,7 @@ try:
     time.sleep(2)
 
     # === BUKA KURSUS TERTENTU ===
-    driver.get("http://127.0.0.1:8000/student/kursus/10/")
+    driver.get("http://127.0.0.1:8000/student/kursus/16/")
     time.sleep(3)
     if "Materi" in driver.page_source:
         log_to_file("Lihat Kursus", "Berhasil")

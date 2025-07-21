@@ -15,8 +15,8 @@ driver = webdriver.Chrome()
 try:
     # 1. Login Admin
     driver.get("http://127.0.0.1:8000/login-admin")
-    driver.find_element(By.NAME, "email").send_keys("amin@gmail.com")
-    driver.find_element(By.NAME, "password").send_keys("amin123")
+    driver.find_element(By.NAME, "email").send_keys("cristov@gmail.com")
+    driver.find_element(By.NAME, "password").send_keys("test123")
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
     time.sleep(2)
 

@@ -18,7 +18,7 @@ def log_to_file(fitur, status, keterangan=""):
 try:
     # === LOGIN ===
     driver.get("http://127.0.0.1:8000/login")
-    driver.find_element(By.NAME, 'email').send_keys('tes1753015815@gmail.com')
+    driver.find_element(By.NAME, 'email').send_keys('tes1753031227@gmail.com')
     driver.find_element(By.NAME, 'password').send_keys('tes12345')
     driver.find_element(By.XPATH, '//button[@type="submit"]').click()
     time.sleep(2)
@@ -29,7 +29,7 @@ try:
         log_to_file("Login", "Gagal", f"Redirect: {driver.current_url}")
 
     # === PILIH KURSUS ===
-    driver.get("http://127.0.0.1:8000/student/kursus/9/")  # ID kursus sesuaikan
+    driver.get("http://127.0.0.1:8000/student/kursus/16/")  # ID kursus sesuaikan
     beli_kursus_link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "beli kursus")))
     beli_kursus_link.click()
 
